@@ -13,7 +13,11 @@ find_package(Qt6 COMPONENTS
         Widgets
         REQUIRED)
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(${PROJECT_NAME} main.cpp
+        src/core/scheduler.hpp
+        src/types.hpp
+        src/entity/Event.cpp
+        src/entity/Event.h)
 target_link_libraries(${PROJECT_NAME}
         Qt::Core
         Qt::Gui
