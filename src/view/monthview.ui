@@ -6,13 +6,34 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>636</width>
-    <height>527</height>
+    <width>649</width>
+    <height>582</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MonthView</string>
   </property>
+  <layout class="QHBoxLayout" name="horizontalLayout">
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>0</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QGridLayout" name="gridLayout" rowstretch="0" rowminimumheight="0" columnminimumwidth="0">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetDefaultConstraint</enum>
+     </property>
+    </layout>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

@@ -26,31 +26,31 @@ private:
 public:
     explicit OpenAIAPI(QString  apiKey) : API_KEY(std::move(apiKey)) {}
 
-    [[nodiscard]] auto sendGetRequest(const QString &endpoint) const -> async_simple::coro::Lazy<QJsonObject> {
-        QNetworkAccessManager manager;
-        QNetworkRequest request;
-
-        // Setup URL and headers for request
-        request.setUrl(QUrl(API_URL + endpoint));
-        request.setRawHeader("Authorization", QString("Bearer " + API_KEY).toLocal8Bit());
-
-        // Send GET request and wait for reply
-        std::unique_ptr<QNetworkReply> reply(manager.get(request));
-        QEventLoop loop;
-        QObject::connect(reply.get(), SIGNAL(finished()), &loop, SLOT(quit()));
-        co_await loop.exec();
-
-        // Parse the JSON reply
-        QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
-        QJsonObject json = document.object();
-
-        // Don't forget to handle possible errors
-        if(reply->error() != QNetworkReply::NoError) {
-            qDebug() << "API request error: " << reply->errorString();
-        }
-
-        co_return json;
-    }
+    // [[nodiscard]] auto sendGetRequest(const QString &endpoint) const -> async_simple::coro::Lazy<QJsonObject> {
+    //     QNetworkAccessManager manager;
+    //     QNetworkRequest request;
+    //
+    //     // Setup URL and headers for request
+    //     request.setUrl(QUrl(API_URL + endpoint));
+    //     request.setRawHeader("Authorization", QString("Bearer " + API_KEY).toLocal8Bit());
+    //
+    //     // Send GET request and wait for reply
+    //     std::unique_ptr<QNetworkReply> reply(manager.get(request));
+    //     QEventLoop loop;
+    //     QObject::connect(reply.get(), SIGNAL(finished()), &loop, SLOT(quit()));
+    //     co_await loop.exec();
+    //
+    //     // Parse the JSON reply
+    //     QJsonDocument document = QJsonDocument::fromJson(reply->readAll());
+    //     QJsonObject json = document.object();
+    //
+    //     // Don't forget to handle possible errors
+    //     if(reply->error() != QNetworkReply::NoError) {
+    //         qDebug() << "API request error: " << reply->errorString();
+    //     }
+    //
+    //     co_return json;
+    // }
 };
 
 } // touka

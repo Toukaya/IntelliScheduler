@@ -19,6 +19,8 @@ namespace touka {
 
     using String = QString;
     using DateTime = QDateTime;
+    using Date = QDate;
+    using Time = QTime;
 
     template <typename T>
     using Vector = QVector<T>;
