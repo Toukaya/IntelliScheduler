@@ -12,6 +12,8 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
+    class MonthView;
+
 class MainWindow : public QMainWindow {
 Q_OBJECT
 
@@ -20,7 +22,17 @@ public:
     ~MainWindow() override;
 
 private:
+
+    void pushWidget2StackView(QWidget *widget) const;
+
+public slots:
+
+    void goMonthView();
+
+private:
     Ui::MainWindow *ui;
+
+    std::unique_ptr<MonthView> month_view_;
 };
 } // touka
 

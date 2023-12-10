@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.27)
-project(IntelliScheduler)
+project(IntelliScheduler CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
@@ -12,7 +12,10 @@ find_package(Qt6 COMPONENTS
         Widgets
         Network
         Test
+        Svg
         REQUIRED)
+
+qt_add_resources(RES resources.qrc)
 
 add_executable(${PROJECT_NAME} main.cpp
         src/core/scheduler.hpp
@@ -33,12 +36,17 @@ add_executable(${PROJECT_NAME} main.cpp
         src/widget/gridcell.cpp
         src/widget/gridcell.h
         src/widget/gridcell.ui
+        ${RES}
+        src/widget/searchline.cpp
+        src/widget/searchline.h
+        src/widget/searchline.ui
 )
 target_link_libraries(${PROJECT_NAME}
         Qt::Core
         Qt::Gui
         Qt::Widgets
         Qt::Network
+        Qt::Svg
 )
 
 if (Qt6Test_FOUND)

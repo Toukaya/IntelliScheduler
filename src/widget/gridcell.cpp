@@ -25,4 +25,11 @@ GridCell::GridCell(QWidget *parent) :
 GridCell::~GridCell() {
     delete ui;
 }
+
+void GridCell::setDate(const Date& date) const {
+    ui->lbDate->setText(date.toString("dd"));
+}
+
+void GridCell::updateEvent(const Event& evt) {
+}
 } // touka

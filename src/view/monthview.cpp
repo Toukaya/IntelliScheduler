@@ -16,9 +16,12 @@ namespace touka {
 MonthView::MonthView(QWidget *parent) :
     QWidget(parent), ui(new Ui::MonthView) {
     ui->setupUi(this);
-    ui->gridLayout->setContentsMargins(0, 0, 0, 0);
-    ui->gridLayout->setSpacing(0);
-
+    ui->tableWidget->setRowCount(6);
+    ui->tableWidget->setColumnCount(7);
+    ui->tableWidget->horizontalHeader()->setVisible(false);
+    ui->tableWidget->verticalHeader()->setVisible(false);
+    ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    ui->tableWidget->verticalHeader()->setSectionResizeMode(QHeaderView::Stretch);
 
     // TODO: this is tmp code
     curr_year_ = 2001;
@@ -32,11 +35,11 @@ MonthView::~MonthView() {
 }
 
 void MonthView::setDateLabels() {
-    const auto layout = ui->gridLayout;
-    for (int i = 1; i <= 6; ++i) {
-        for (int j = 1; j <= 7; ++j) {
+    const auto table = ui->tableWidget;
+    for (int i = 0; i < 6; ++i) {
+        for (int j = 0; j < 7; ++j) {
             auto cell = new GridCell(this);
-            layout->addWidget(cell, i, j);
+            table->setCellWidget(i, j, cell);
         }
     }
 }

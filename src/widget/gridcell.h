@@ -10,21 +10,34 @@
 #include "types.hpp"
 
 namespace touka {
-QT_BEGIN_NAMESPACE
-namespace Ui { class GridCell; }
-QT_END_NAMESPACE
+    QT_BEGIN_NAMESPACE
+    namespace Ui {
+        class GridCell;
+    }
+    QT_END_NAMESPACE
+    class Event;
 
-class GridCell : public QFrame {
-Q_OBJECT
+    constexpr static std::string_view OMITTED_EVT_LABEL_COLOR = "#848484";
 
-public:
-    explicit GridCell(QWidget *parent = nullptr);
-    ~GridCell() override;
+    class GridCell : public QFrame {
+        Q_OBJECT
 
-private:
-    Ui::GridCell *ui;
-    std::shared_ptr<Date> date_;
-};
-} // touka
+    public:
+        explicit GridCell(QWidget *parent = nullptr);
+        ~GridCell() override;
 
-#endif //GRIDCELL_H
+        void setDate(const Date &date) const;
+
+    public slots:
+         void updateEvent(const Event &evt);
+
+    private:
+        Ui::GridCell *ui;
+        std::shared_ptr<Date> date_;
+
+    private slots:
+        // void onEvtClicked(bool )
+    };
+}  // namespace touka
+
+#endif  // GRIDCELL_H
