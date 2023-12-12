@@ -31,8 +31,8 @@ add_executable(${PROJECT_NAME} main.cpp
         src/view/mainwindow.cpp
         src/view/mainwindow.h
         src/view/mainwindow.ui
-        src/uitls/OpenAIAPI.cpp
-        src/uitls/OpenAIAPI.h
+        src/utils/OpenAIAPI.cpp
+        src/utils/OpenAIAPI.h
         src/widget/gridcell.cpp
         src/widget/gridcell.h
         src/widget/gridcell.ui
@@ -40,6 +40,8 @@ add_executable(${PROJECT_NAME} main.cpp
         src/widget/searchline.cpp
         src/widget/searchline.h
         src/widget/searchline.ui
+        src/utils/DateUtil.cpp
+        src/utils/DateUtil.h
 )
 target_link_libraries(${PROJECT_NAME}
         Qt::Core

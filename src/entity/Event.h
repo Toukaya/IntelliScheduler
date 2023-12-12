@@ -12,9 +12,6 @@ namespace touka {
 using Id = uint32;
 
 class Event {
-public:
-
-
 
 private:
 

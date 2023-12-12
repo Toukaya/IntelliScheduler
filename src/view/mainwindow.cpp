@@ -22,8 +22,6 @@ MainWindow::MainWindow(QWidget *parent) :
     pal.setColor(QPalette::Window, Qt::white);
     this->setAutoFillBackground(true);
     this->setPalette(pal);
-
-
 }
 
 MainWindow::~MainWindow() {
