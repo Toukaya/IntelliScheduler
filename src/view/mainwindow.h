@@ -13,6 +13,7 @@ namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
     class MonthView;
+    class WeekView;
 
 class MainWindow : public QMainWindow {
 Q_OBJECT
@@ -33,6 +34,7 @@ private:
     Ui::MainWindow *ui;
 
     std::unique_ptr<MonthView> month_view_;
+    std::unique_ptr<WeekView> week_view_;
 };
 } // touka
 

@@ -14,7 +14,6 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MonthView; }
 QT_END_NAMESPACE
 
-class GridCellWidget;
 enum class Month;
 
 class MonthView : public QWidget {
@@ -29,10 +28,17 @@ public:
 
 protected:
 
+    /**
+     * @brief Initializes the table widget for displaying the month view.
+     *
+     * This function sets up the table widget to display the month view. It sets the number
+     * of rows and columns, adjusts the header sizes, and sets the size policy to allow expanding.
+     *
+     * @note This function is const, meaning it does not modify the state of the object.
+     */
     void initTable() const;
 
     void initDateLabels();
-
 
     void updateDateLabels();
 

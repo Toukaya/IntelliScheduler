@@ -7,6 +7,7 @@
 #include "mainwindow.h"
 
 #include "monthview.h"
+#include "weekview.h"
 #include "ui_MainWindow.h"
 
 namespace touka {
@@ -16,7 +17,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     // TODO: remove this test code
     month_view_ = std::make_unique<MonthView>();
-    pushWidget2StackView(month_view_.get());
+    week_view_ = std::make_unique<WeekView>();
+    pushWidget2StackView(week_view_.get());
 
     QPalette pal(this->palette());
     pal.setColor(QPalette::Window, Qt::white);

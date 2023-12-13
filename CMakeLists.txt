@@ -42,6 +42,18 @@ add_executable(${PROJECT_NAME} main.cpp
         src/widget/searchline.ui
         src/utils/DateUtil.cpp
         src/utils/DateUtil.h
+        src/view/weekview.cpp
+        src/view/weekview.h
+        src/view/weekview.ui
+        src/widget/weekeventcell.cpp
+        src/widget/weekeventcell.h
+        src/widget/weekeventcell.ui
+        src/widget/weekevtcelllabel.cpp
+        src/widget/weekevtcelllabel.h
+        src/widget/weekevtcelllabel.ui
+        src/widget/weektablewidget.cpp
+        src/widget/weektablewidget.h
+        src/widget/weektablewidget.ui
 )
 target_link_libraries(${PROJECT_NAME}
         Qt::Core
