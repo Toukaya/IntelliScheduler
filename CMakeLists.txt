@@ -17,7 +17,7 @@ find_package(Qt6 COMPONENTS
 
 qt_add_resources(RES resources.qrc)
 
-add_executable(${PROJECT_NAME} main.cpp
+add_library(intelli_lib STATIC
         src/core/scheduler.hpp
         src/types.hpp
         src/entity/Event.cpp
@@ -36,7 +36,6 @@ add_executable(${PROJECT_NAME} main.cpp
         src/widget/gridcell.cpp
         src/widget/gridcell.h
         src/widget/gridcell.ui
-        ${RES}
         src/widget/searchline.cpp
         src/widget/searchline.h
         src/widget/searchline.ui
@@ -54,8 +53,20 @@ add_executable(${PROJECT_NAME} main.cpp
         src/widget/weektablewidget.cpp
         src/widget/weektablewidget.h
         src/widget/weektablewidget.ui
+        src/widget/gridview.cpp
+        src/widget/gridview.h
+        src/controller/EventManager.cpp
+        src/controller/EventManager.h
+        src/interface/IEventSubscriber.cpp
+        src/interface/IEventSubscriber.h
+        src/entity/Recurrence.cpp
+        src/entity/Recurrence.h
+        src/entity/Alarm.cpp
+        src/entity/Alarm.h
+        src/entity/EventCategories.cpp
+        src/entity/EventCategories.h
 )
-target_link_libraries(${PROJECT_NAME}
+target_link_libraries(intelli_lib PRIVATE
         Qt::Core
         Qt::Gui
         Qt::Widgets
@@ -63,12 +74,15 @@ target_link_libraries(${PROJECT_NAME}
         Qt::Svg
 )
 
+add_executable(${PROJECT_NAME} main.cpp ${RES}
+        src/controller/EventManager.cpp)
+
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt::Widgets  async_simple intelli_lib )
+
 if (Qt6Test_FOUND)
     enable_testing()
     add_subdirectory(tests)
 endif()
 
 add_subdirectory(third_party/async_simple)
-target_include_directories(${PROJECT_NAME} PRIVATE third_party/async_simple)
-target_include_directories(${PROJECT_NAME} PUBLIC src)
-target_link_libraries(${PROJECT_NAME} async_simple)
+target_include_directories(intelli_lib PUBLIC src ${CMAKE_SOURCE_DIR}/third_party/async_simple)

@@ -5,17 +5,21 @@
 #ifndef EVENT_H
 #define EVENT_H
 
-#include "../types.hpp"
+#include <qdatetime.h>
+
+#include "EventCategories.h"
+#include "Recurrence.h"
+#include "types.hpp"
 
 namespace touka {
 
-using Id = uint32;
+using Id = String;
 
 class Event {
 
 private:
 
-    Id id_;
+    Id uid_;
 
     String summary_;
 
@@ -23,28 +27,43 @@ private:
 
     String location_;
 
-    Vector<std::pair<DateTime, DateTime>> dateTime_;
+    EventCategories categories_;
+
+    DateTime dt_start_;
+
+    DateTime dt_end_;
+
+    DateTime dt_stamp_;
+
+    Recurrence rrule_;
+
+    uint8 recurrence_no_;
+
+    std::shared_ptr<Event> base_evt_;
+
 
 public:
-    [[nodiscard]] Id get_id() const {
-        return id_;
+    [[nodiscard]] Id getUid() const {
+        return uid_;
     }
 
-    [[nodiscard]] const String& get_summary() const {
+    [[nodiscard]] const String& getSummary() const {
         return summary_;
     }
 
-    [[nodiscard]] const String& get_description() const {
+    [[nodiscard]] const String& getDescription() const {
         return description_;
     }
 
-    [[nodiscard]] const String& get_location() const {
+    [[nodiscard]] const String& getLocation() const {
         return location_;
     }
 
-    [[nodiscard]] const Vector<std::pair<DateTime, DateTime>>& get_date_time() const {
-        return dateTime_;
-    }
+    [[nodiscard]] DateTime getDtStart() const { return dt_start_; }
+    [[nodiscard]] DateTime getDtEnd() const { return dt_end_; }
+    [[nodiscard]] DateTime getDtStamp() const { return dt_stamp_; }
+    [[nodiscard]] EventCategories getCategories() const { return categories_; }
+
 };
 
 } // touka

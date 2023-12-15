@@ -22,8 +22,12 @@ namespace touka {
     using Date = QDate;
     using Time = QTime;
 
+    using Color = QColor;
+
     template <typename T>
     using Vector = QVector<T>;
+
+    constexpr static int16 MINUTES_PER_DAY = 1440;
 
 }
 

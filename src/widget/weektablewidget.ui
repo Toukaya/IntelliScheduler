@@ -1,22 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
-    <author/>
-    <comment/>
-    <exportmacro/>
-    <class>touka::WeekTableWidget</class>
-    <widget class="QTableWidget" name="touka::WeekTableWidget">
-        <property name="geometry">
-            <rect>
-                <x>0</x>
-                <y>0</y>
-                <width>400</width>
-                <height>300</height>
-            </rect>
-        </property>
-        <property name="windowTitle">
-            <string>WeekTableWidget</string>
-        </property>
-    </widget>
-    <pixmapfunction/>
-    <connections/>
+ <class>touka::WeekTableWidget</class>
+ <widget class="QTableWidget" name="touka::WeekTableWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>300</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>WeekTableWidget</string>
+  </property>
+  <property name="showGrid">
+   <bool>false</bool>
+  </property>
+  <property name="rowCount">
+   <number>3</number>
+  </property>
+  <property name="columnCount">
+   <number>3</number>
+  </property>
+  <attribute name="verticalHeaderDefaultSectionSize">
+   <number>60</number>
+  </attribute>
+  <row/>
+  <row/>
+  <row/>
+  <column/>
+  <column/>
+  <column/>
+ </widget>
+ <resources/>
+ <connections/>
 </ui>

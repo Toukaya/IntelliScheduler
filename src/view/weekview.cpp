@@ -4,8 +4,9 @@
 
 // You may need to build the project (run Qt uic code generator) to get "ui_WeekView.h" resolved
 
-#include <QSplitter>
+#include <QScrollBar>
 #include <QTimer>
+#include <QTime>
 #include "weekview.h"
 #include "ui_WeekView.h"
 #include "utils/DateUtil.h"
@@ -48,6 +49,10 @@ namespace touka {
 
             ui->twEvt->setVerticalHeaderItem(i, headerItem);
         }
+
+        auto currTime = QTime::currentTime();
+        int centerLineY = currTime.hour() * 60 + currTime.minute() - ui->twEvt->viewport()->height() / 2;
+        ui->twEvt->verticalScrollBar()->setValue(centerLineY);
 
         auto headerItem = new QTableWidgetItem("all-day");
         headerItem->setFont(font);
