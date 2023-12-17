@@ -7,6 +7,7 @@
 #include "monthview.h"
 
 #include <QtCore/qdatetime.h>
+#include <QtWidgets/QPushButton>
 
 #include "ui_MonthView.h"
 #include "utils/DateUtil.h"
@@ -26,11 +27,11 @@ MonthView::MonthView(QWidget *parent) :
     ui->lbDate->setText(getDateTitle());
 
     connect(ui->btnPrevMonth, &QPushButton::clicked, this, [&] {
-        const auto date = Date(curr_year_, static_cast<int>(curr_month_), 1).addMonths(-1);
+        const auto date = Date(curr_year_, MONTH_TO_INT_TOUKA(curr_month_), 1).addMonths(-1);
         navigateTo(date.year(), static_cast<Month>(date.month()));
     });
     connect(ui->btnNextMonth, &QPushButton::clicked, this, [&] {
-        const auto date = Date(curr_year_, static_cast<int>(curr_month_), 1).addMonths(1);
+        const auto date = Date(curr_year_, MONTH_TO_INT_TOUKA(curr_month_), 1).addMonths(1);
         navigateTo(date.year(), static_cast<Month>(date.month()));
     });
     connect(ui->btnToday, &QPushButton::clicked, this, [&] {
@@ -45,7 +46,7 @@ MonthView::~MonthView() {
 }
 
 Date MonthView::getCurrentMonthFirstDay() {
-    return {curr_year_, static_cast<int>(curr_month_), 1};
+    return {curr_year_, MONTH_TO_INT_TOUKA(curr_month_), 1};
 }
 
 inline void MonthView::initTable() const {
@@ -61,7 +62,7 @@ inline void MonthView::initDateLabels() {
     auto currDate = getCurrentMonthFirstDay();
     const int dayOfWeek = currDate.dayOfWeek();
     currDate = currDate.addDays(-dayOfWeek);
-    const int month = static_cast<int>(curr_month_);
+    const int month = MONTH_TO_INT_TOUKA(curr_month_);
 
     for (int i = 0; i < 6; ++i) {
         for (int j = 0; j < 7; ++j) {
@@ -78,7 +79,7 @@ void MonthView::updateDateLabels() {
     auto currDate = getCurrentMonthFirstDay();
     const int dayOfWeek = currDate.dayOfWeek();
     currDate = currDate.addDays(-dayOfWeek);
-    const int month = static_cast<int>(curr_month_);
+    const int month = MONTH_TO_INT_TOUKA(curr_month_);
 
     for (int i = 0; i < 6; ++i) {
         for (int j = 0; j < 7; ++j) {

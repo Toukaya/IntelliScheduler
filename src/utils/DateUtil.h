@@ -6,7 +6,11 @@
 #define DATEUTIL_H
 #include <unordered_map>
 
+#include "EnumUtils.h"
 #include "types.hpp"
+
+#define MONTH_TO_INT_TOUKA EnumUtils::toUnderlying<Month>
+#define WEEK_TO_INT_TOUKA EnumUtils::toUnderlying<Week>
 
 namespace touka {
 
@@ -40,10 +44,6 @@ namespace touka {
  */
     class DateUtil {
     public:
-        /**
-         * @class DateUtil
-         * This class provides utility functions for working with dates.
-         */
         static bool isValid(int year, Month month, int day);
         /**
          * @brief Returns the literal representation of the given month.

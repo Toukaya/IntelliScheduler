@@ -28,3 +28,4 @@ endmacro()
 # 添加测试
 package_add_test(WeekEvtCellLabelTest)
 package_add_test(WeekTableWidgetTest)
+package_add_test(EventViewTest)

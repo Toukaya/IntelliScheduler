@@ -14,7 +14,7 @@
 
 namespace touka {
     WeekEventCell::WeekEventCell(QWidget *parent) :
-            QWidget(parent), ui(new Ui::WeekEventCell) {
+            QTableWidget(parent), ui(new Ui::WeekEventCell) {
         ui->setupUi(this);
         QGridLayout *gridLayout = new QGridLayout();
     }
@@ -29,7 +29,7 @@ namespace touka {
     void WeekEventCell::addEvent(const std::shared_ptr<Event>& evt) {
         if (!evt) return;
         auto label = new WeekEvtCellLabel(this);
-        auto color = evt->getCategories().getColor();
+        auto color = evt->get_categories().getColor();
         label->setColor(color);
 
         // auto height =
@@ -37,5 +37,11 @@ namespace touka {
     }
 
     void WeekEventCell::removeEvent(std::shared_ptr<Event> evt) {
+    }
+
+    void WeekEventCell::refresh() {
+        for (const auto & event : week_evt_cell_labels_) {
+
+        }
     }
 } // touka

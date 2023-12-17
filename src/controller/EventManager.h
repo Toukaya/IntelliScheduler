@@ -14,8 +14,10 @@ class EventManager : public QObject{
     // Q_OBJECT
 
 public:
-    static Event parseICalFormat(const String &icalData);
-    static String exportICalFormat(const Event &evt);
+    static std::vector<Event> parseICalFormat(std::istringstream& icalDataStream);
+    static String toICalFormat(const Event &evt);
+    static Event iCalFormatToEvt(const String &icalDataStream);
+    static String exportICalFormat(const std::vector<Event> &evts);
 };
 
 } // touka

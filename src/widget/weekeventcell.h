@@ -5,7 +5,7 @@
 #ifndef INTELLISCHEDULER_WEEKEVENTCELL_H
 #define INTELLISCHEDULER_WEEKEVENTCELL_H
 
-#include <QWidget>
+#include <QTableWidget>
 #include <unordered_set>
 #include "types.hpp"
 
@@ -19,7 +19,7 @@ namespace touka {
 
     constexpr static int16 HALF_HOUR_HEIGHT_IN_PIXELS = 30;
 
-    class WeekEventCell : public QWidget {
+    class WeekEventCell : public QTableWidget {
     Q_OBJECT
 
     public:
@@ -39,10 +39,18 @@ namespace touka {
 
         void clear();
 
+        void refresh();
+
     private:
         Ui::WeekEventCell *ui;
 
         std::unordered_set<std::shared_ptr<Event>> week_evt_cell_labels_;
+
+        int getRowIdx(const Time &time);
+
+        double getMinutePerCol();
+
+        int calEvtLabelColCnt(const Time &startTime, const Time &endTime);
     };
 } // touka
 

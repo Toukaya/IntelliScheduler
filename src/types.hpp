@@ -6,7 +6,10 @@
 #define TYPES_HPP
 
 #include <QApplication>
+#include <QTime>
+#include <QDate>
 #include <QtCore/qstring.h>
+#include <QtCore/qtimezone.h>
 
 namespace touka {
 
@@ -21,6 +24,7 @@ namespace touka {
     using DateTime = QDateTime;
     using Date = QDate;
     using Time = QTime;
+    using TimeZone = QTimeZone;
 
     using Color = QColor;
 

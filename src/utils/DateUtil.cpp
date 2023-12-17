@@ -8,15 +8,15 @@
 
 namespace touka {
     inline bool DateUtil::isValid(int year, Month month, int day) {
-        return QDate::isValid(year, static_cast<int>(month), day);
+        return QDate::isValid(year, MONTH_TO_INT_TOUKA(month), day);
     }
 
     String DateUtil::getLiteralMonth(Month month) {
-        return monthToString.at(static_cast<int>(month));
+        return monthToString.at(MONTH_TO_INT_TOUKA(month));
     }
 
     String DateUtil::getLiteralWeek(Week week) {
-        return weekToString.at(static_cast<int>(week));
+        return weekToString.at(WEEK_TO_INT_TOUKA(week));
     }
 
     inline Date DateUtil::getCurrDate() {
@@ -24,7 +24,7 @@ namespace touka {
     }
 
     inline int DateUtil::getDaysInMonth(int year, Month month) {
-        return QDate(year, static_cast<int>(month), 1).daysInMonth();
+        return QDate(year, MONTH_TO_INT_TOUKA(month), 1).daysInMonth();
     }
 
     inline Date DateUtil::getFirstDayOfMonth(const Date &date) {

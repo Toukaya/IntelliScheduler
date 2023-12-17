@@ -65,6 +65,14 @@ add_library(intelli_lib STATIC
         src/entity/Alarm.h
         src/entity/EventCategories.cpp
         src/entity/EventCategories.h
+        src/widget/weekeventcell.ui
+        src/utils/EventUtils.cpp
+        src/utils/EventUtils.h
+        src/utils/EnumUtils.h
+        src/utils/EventUtils.cpp
+        src/view/eventview.cpp
+        src/view/eventview.h
+        src/view/eventview.ui
 )
 target_link_libraries(intelli_lib PRIVATE
         Qt::Core
