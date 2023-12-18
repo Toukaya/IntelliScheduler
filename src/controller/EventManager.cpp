@@ -24,7 +24,7 @@ namespace touka {
         ss << "DESCRIPTION:" << evt.get_description().toStdString() << "\n";
         ss << "CLASS:" << EventUtils::classificationToString(evt.get_classification()).toStdString() << "\n";
         ss << "STATUS:" << EventUtils::statusToString(evt.get_status()).toStdString() << "\n";
-        ss << "TRANSP:" << EventUtils::transparencyToString(evt.get_transp()).toStdString() << "\n";
+        // ss << "TRANSP:" << EventUtils::transparencyToString(evt.get_transp()).toStdString() << "\n";
         ss << "PRIORITY:" << EventUtils::priorityToString(evt.get_priority()).toStdString() << "\n";
         ss << "DTSTART:" << evt.get_dt_start().toString().toStdString() << "\n";
         ss << "DTEND:" << evt.get_dt_end().toString().toStdString() << "\n";
@@ -38,6 +38,10 @@ namespace touka {
         // ss << "RDATE:" << evt.get_rdate().toString().toStdString() << "\n";
         ss << "END:VEVENT\n";
         return ss.str().data();
+    }
+
+    Event EventManager::iCalFormatToEvt(const String& icalDataStream) {
+
     }
 
     String EventManager::exportICalFormat(const std::vector<Event>& evts) {

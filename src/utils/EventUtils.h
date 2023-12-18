@@ -32,10 +32,10 @@ namespace touka {
         CANCELLED
     };
 
-    enum class Transparency {
-        OPAQUE,
-        TRANSPARENT
-    };
+    // enum class Transparency {
+    //     OPAQUE,
+    //     TRANSPARENT
+    // };
 class EventUtils {
 public:
 
@@ -76,14 +76,14 @@ public:
         return EnumUtils::enumToString(status, statusToStrMap);
     }
 
-    static String transparencyToString(Transparency transparency) {
-        static const std::map<Transparency, std::string> transparencyToStrMap = {
-            {Transparency::OPAQUE, "OPAQUE"},
-            {Transparency::TRANSPARENT, "TRANSPARENT"}
-        };
-
-        return EnumUtils::enumToString(transparency, transparencyToStrMap);
-    }
+    // static String transparencyToString(Transparency transparency) {
+    //     static const std::map<Transparency, std::string> transparencyToStrMap = {
+    //         {Transparency::OPAQUE, "OPAQUE"},
+    //         {Transparency::TRANSPARENT, "TRANSPARENT"}
+    //     };
+    //
+    //     return EnumUtils::enumToString(transparency, transparencyToStrMap);
+    // }
     
 
     static Priority stringToPriority(const String& priority) {
@@ -147,22 +147,22 @@ public:
         }
     }
 
-    static Transparency stringToTransparency(const String& transp) {
-        static const std::map<std::string, Transparency> strToTransparencyMap = {
-            {"OPAQUE", Transparency::OPAQUE},
-            {"TRANSPARENT", Transparency::TRANSPARENT}
-        };
-
-        std::string lowerStr(transp.toStdString());
-        std::ranges::transform(lowerStr, lowerStr.begin(), ::tolower);
-
-        auto it = strToTransparencyMap.find(lowerStr);
-        if (it != strToTransparencyMap.end()) {
-            return it->second;
-        } else {
-            throw std::invalid_argument("Invalid transparency string");
-        }
-    }
+    // static Transparency stringToTransparency(const String& transp) {
+    //     static const std::map<std::string, Transparency> strToTransparencyMap = {
+    //         {"OPAQUE", Transparency::OPAQUE},
+    //         {"TRANSPARENT", Transparency::TRANSPARENT}
+    //     };
+    //
+    //     std::string lowerStr(transp.toStdString());
+    //     std::ranges::transform(lowerStr, lowerStr.begin(), ::tolower);
+    //
+    //     auto it = strToTransparencyMap.find(lowerStr);
+    //     if (it != strToTransparencyMap.end()) {
+    //         return it->second;
+    //     } else {
+    //         throw std::invalid_argument("Invalid transparency string");
+    //     }
+    // }
 };
 
 } // touka

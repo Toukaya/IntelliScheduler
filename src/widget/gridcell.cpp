@@ -8,8 +8,10 @@
 #include "utils/DateUtil.h"
 #include <QtCore/qdatetime.h>
 #include <QPainter.h>
+#include <QtGui/qevent.h>
 
 #include "ui_GridCell.h"
+#include "view/eventview.h"
 
 namespace touka {
 GridCell::GridCell(QWidget *parent) :
@@ -89,6 +91,13 @@ void GridCell::setActivate(const bool isActivate) {
 bool GridCell::isWeekend() const {
     const int dayOfWeek = date_.dayOfWeek();
     return dayOfWeek == Qt::Saturday || dayOfWeek == Qt::Sunday;
+}
+
+void GridCell::mouseReleaseEvent(QMouseEvent* event) {
+    // 判断用户按下的是哪一个鼠标键
+    if(event->button() == Qt::RightButton)
+        EventView::menu(QCursor::pos(), this);
+    QFrame::mouseReleaseEvent(event);
 }
 
 

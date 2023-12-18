@@ -14,40 +14,51 @@
 #include "ui_EventView.h"
 
 namespace touka {
-    EventView::EventView(bool isWindow, QWidget *parent) :
-        QWidget(parent, Qt::Window), ui(new Ui::EventView), is_windows_(isWindow) {
+    EventView::EventView( QWidget *parent) :
+        QWidget(parent), ui(new Ui::EventView), is_windows_(false) {
         ui->setupUi(this);
 
-        if (is_windows_) {
-            setWindowFlags(Qt::FramelessWindowHint);
-            setAttribute(Qt::WA_TranslucentBackground);
-            setAttribute(Qt::WA_DeleteOnClose);
-            int left, top, right, bottom;
-            layout()->getContentsMargins(&left, &top, &right, &bottom);
-            // set the layout left margin to TRIANGLE_HEIGHT
-            layout()->setContentsMargins(TRIANGLE_HEIGHT, top, right, bottom);
-            // setFocus();
-        } else {
-            QPalette pal(this->palette());
-            pal.setColor(QPalette::Window, BACKGROUND_COLOR);
-            setAutoFillBackground(true);
-            setPalette(pal);
-        }
+        QPalette pal(this->palette());
+        pal.setColor(QPalette::Window, BACKGROUND_COLOR);
+        setAutoFillBackground(true);
+        setPalette(pal);
     }
 
 
-    EventView::EventView(QWidget* parent) :
-        QWidget(parent, Qt::Window), ui(new Ui::EventView), is_windows_(true) {
+    EventView::EventView(Event *evt, QWidget* parent) :
+        QWidget(parent, Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint), ui(new Ui::EventView), is_windows_(true) {
         ui->setupUi(this);
 
-        // setWindowFlags(Qt::FramelessWindowHint);
         setAttribute(Qt::WA_TranslucentBackground);
         setAttribute(Qt::WA_DeleteOnClose);
         int left, top, right, bottom;
         layout()->getContentsMargins(&left, &top, &right, &bottom);
         // set the layout left margin to TRIANGLE_HEIGHT
         layout()->setContentsMargins(TRIANGLE_HEIGHT, top, right, bottom);
-        // setFocus();
+        //register event filter
+        qApp->installEventFilter(this);
+
+    }
+
+    auto EventView::playAnimationGroup(QObject* target, const QRect& startGeometry, const QRect& endGeometry,
+        int duration, qreal startOpacity, qreal endOpacity) -> QParallelAnimationGroup* {
+        const auto fadeAnimation = new QPropertyAnimation(target, "windowOpacity");
+        fadeAnimation->setDuration(duration);
+        fadeAnimation->setStartValue(startOpacity);
+        fadeAnimation->setEndValue(endOpacity);
+
+        const auto shrinkAnimation = new QPropertyAnimation(target, "geometry");
+        shrinkAnimation->setDuration(duration);
+        shrinkAnimation->setStartValue(startGeometry);
+        shrinkAnimation->setEndValue(endGeometry);
+        if (duration >= 500)
+            shrinkAnimation->setEasingCurve(QEasingCurve::InOutBack);
+
+        const auto group = new QParallelAnimationGroup(target);
+        group->addAnimation(fadeAnimation);
+        group->addAnimation(shrinkAnimation);
+        group->start(QAbstractAnimation::DeleteWhenStopped);
+        return group;
     }
 
     EventView::~EventView() {
@@ -55,27 +66,59 @@ namespace touka {
     }
 
     void EventView::menu(QPoint pos, QWidget *parent) {
-        // Todo implement it
-        const auto eventView = new EventView(parent);
+        // Todo get it done
+        const auto eventView = new EventView(nullptr, parent);
+        pos.rx() += 10;
         pos.ry() = pos.y() - eventView->height() / 2;
         eventView->move(pos);
         eventView->show();
 
-        const auto fadeAnimation = new QPropertyAnimation(eventView, "windowOpacity");
-        fadeAnimation->setDuration(650);
-        fadeAnimation->setStartValue(0);
-        fadeAnimation->setEndValue(1);
+        const auto group =
+            playAnimationGroup(eventView,
+            QRect(pos.x() + 10, pos.y() + eventView->geometry().height() / 2, 1, 10),
+            eventView->geometry(), 500, 0, 1);
 
-        const auto shrinkAnimation = new QPropertyAnimation(eventView, "geometry");
-        shrinkAnimation->setDuration(650);
-        shrinkAnimation->setStartValue(QRect(eventView->geometry().x(), eventView->geometry().y() + eventView->geometry().height() / 2, 0, 0));
-        shrinkAnimation->setEndValue(eventView->geometry());
-        shrinkAnimation->setEasingCurve(QEasingCurve::InOutBack);
+        connect(group, &QParallelAnimationGroup::finished, eventView, [eventView]() {
+            eventView->setFixedSize(eventView->size());
+        });
+    }
 
-        const auto group = new QParallelAnimationGroup;
-        group->addAnimation(fadeAnimation);
-        group->addAnimation(shrinkAnimation);
-        group->start(QAbstractAnimation::DeleteWhenStopped);
+    bool EventView::eventFilter(QObject* watched, QEvent* event) {
+        // This lambda function takes a rect parameter representing the geometry of the window.
+        const auto minimizeAndClose = [this](const QRect &rect) {
+            // Set the minimum size of the window to 0, 0 because of a fixed size was set before.
+            setMinimumSize(0, 0);
+
+            const auto group =
+                playAnimationGroup(this,
+                rect,
+                QRect(rect.x(), rect.y() + rect.height() / 2, 0, 0),
+                150, 1, 0);
+
+            connect(group, &QPropertyAnimation::finished, this, &EventView::close);
+        };
+
+        // If the event is the application losing focus or a mouse button press in the non-client area, close the window.
+        // This is to close the window when the user switches to another application or clicks on the title bar of the window.
+        if (event->type() == QEvent::ApplicationDeactivate ||
+            event->type() == QEvent::NonClientAreaMouseButtonPress) {
+            minimizeAndClose(this->geometry());
+            return true;
+        }
+
+        // If the event is a mouse button press, check if the mouse is inside the window.
+        // If the mouse is not press on this EventView widget, close the window.
+        if (event->type() == QEvent::MouseButtonPress) {
+            auto rect = this->rect();
+            rect.setX(rect.x() + TRIANGLE_HEIGHT); // The triangle is not part of the window.
+            if (!rect.contains(mapFromGlobal(QCursor::pos()))) {
+                minimizeAndClose(this->geometry());
+                return true;
+            }
+        }
+
+        // If the event is not one of the above, pass it to the base class.
+        return QWidget::eventFilter(watched, event);
     }
 
     void EventView::paintEvent(QPaintEvent* event) {
@@ -99,33 +142,4 @@ namespace touka {
         // Draw the triangle
         painter.drawPolygon(triangle);
     }
-
-    void EventView::focusOutEvent(QFocusEvent* event) {
-        QWidget::focusOutEvent(event);
-
-        if (!is_windows_) return;
-        // TODO fix it
-        QWidget *currFocus = QApplication::focusWidget();
-        if (currFocus && !isAncestorOf(currFocus))
-            return;
-
-        const auto fadeAnimation = new QPropertyAnimation(this, "windowOpacity");
-        fadeAnimation->setDuration(200);
-        fadeAnimation->setStartValue(1);
-        fadeAnimation->setEndValue(0);
-
-        const auto shrinkAnimation = new QPropertyAnimation(this, "geometry");
-        shrinkAnimation->setDuration(200);
-        shrinkAnimation->setStartValue(this->geometry());
-        shrinkAnimation->setEndValue(QRect(this->geometry().x(), this->geometry().y() + this->geometry().height() / 2, 0, 0));
-        // shrinkAnimation->setEasingCurve(QEasingCurve::OutBack);
-
-        const auto group = new QParallelAnimationGroup;
-        group->addAnimation(fadeAnimation);
-        group->addAnimation(shrinkAnimation);
-        group->start(QAbstractAnimation::DeleteWhenStopped);
-
-        connect(fadeAnimation, &QPropertyAnimation::finished, this, &EventView::close);
-    }
-
 } // touka

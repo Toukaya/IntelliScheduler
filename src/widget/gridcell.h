@@ -45,6 +45,9 @@ namespace touka {
 
         [[nodiscard]] inline bool isWeekend() const;
 
+    protected:
+        void mouseReleaseEvent(QMouseEvent* event) override;
+
     public slots:
         void refresh();
 

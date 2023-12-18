@@ -22,7 +22,7 @@ private:
     String description_;
     Classification classification_;
     Status status_;
-    Transparency transp_;
+    // Transparency transp_;
     Priority priority_;
     DateTime dt_start_;
     DateTime dt_end_;
@@ -80,13 +80,13 @@ public:
         status_ = status;
     }
 
-    [[nodiscard]] Transparency get_transp() const {
-        return transp_;
-    }
-
-    void set_transp(const Transparency transp) {
-        transp_ = transp;
-    }
+    // [[nodiscard]] Transparency get_transp() const {
+    //     return transp_;
+    // }
+    //
+    // void set_transp(const Transparency transp) {
+    //     transp_ = transp;
+    // }
 
     [[nodiscard]] Priority get_priority() const {
         return priority_;

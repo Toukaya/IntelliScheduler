@@ -10,6 +10,12 @@
 #include "types.hpp"
 
 namespace touka {
+    class Event;
+}
+
+class QParallelAnimationGroup;
+
+namespace touka {
 QT_BEGIN_NAMESPACE
 namespace Ui { class EventView; }
 QT_END_NAMESPACE
@@ -22,25 +28,30 @@ class EventView : public QWidget {
 Q_OBJECT
 
 public:
-    explicit EventView(bool isWindow, QWidget *parent = nullptr);
+    explicit EventView(QWidget *parent = nullptr);
     ~EventView() override;
 
 public slots:
 
     static void menu(/*TODO Event infomation param*/QPoint pos, QWidget *parent);
 
-protected:
-    void paintEvent(QPaintEvent* event) override;
+    bool eventFilter(QObject* watched, QEvent* event) override;
 
-    void focusOutEvent(QFocusEvent* event) override;
+protected:
+
+    void paintEvent(QPaintEvent* event) override;
 
 private:
 
-    explicit EventView(QWidget *parent = nullptr);
+    explicit EventView(Event *evt, QWidget *parent = nullptr);
 
     Ui::EventView *ui;
 
     bool is_windows_;
+
+static auto playAnimationGroup(QObject* target, const QRect&startGeometry, const QRect&endGeometry, int duration,
+                                 qreal startOpacity, qreal endOpacity) -> QParallelAnimationGroup*;
+
 };
 } // touka
 

@@ -1,0 +1,10 @@
+<RCC>
+  <qresource prefix="icon">
+    <file>resource/icon/circle.svg</file>
+    <file>resource/icon/add_event.svg</file>
+    <file>resource/icon/event.svg</file>
+    <file>resource/icon/back_ui.svg</file>
+    <file>resource/icon/next_ui.svg</file>
+    <file>resource/icon/search.svg</file>
+  </qresource>
+</RCC>

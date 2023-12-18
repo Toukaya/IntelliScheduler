@@ -20,10 +20,7 @@ public:
         YEARLY,
         MONTHLY,
         WEEKLY,
-        DAILY,
-        HOURLY,
-        MINUTELY,
-        SECONDLY
+        DAILY
     };
 
     [[nodiscard]] Frequency get_freq() const {
@@ -56,30 +53,6 @@ public:
 
     void set_interval(const uint16 interval) {
         interval_ = interval;
-    }
-
-    [[nodiscard]] const std::vector<int>& get_bysecond() const {
-        return bysecond_;
-    }
-
-    void set_bysecond(const std::vector<int>& bysecond) {
-        bysecond_ = bysecond;
-    }
-
-    [[nodiscard]] const std::vector<int>& get_byminute() const {
-        return byminute_;
-    }
-
-    void set_byminute(const std::vector<int>& byminute) {
-        byminute_ = byminute;
-    }
-
-    [[nodiscard]] const std::vector<int>& get_byhour() const {
-        return byhour_;
-    }
-
-    void set_byhour(const std::vector<int>& byhour) {
-        byhour_ = byhour;
     }
 
     [[nodiscard]] const std::vector<Week>& get_byday() const {
@@ -162,9 +135,6 @@ private:
     DateTime until_;            // The end date of the recurrence
     int count_;                 // The number of occurrences
     uint16 interval_;           // The interval between each occurrence
-    std::vector<int> bysecond_; // The seconds within a minute
-    std::vector<int> byminute_; // The minutes within an hour
-    std::vector<int> byhour_;   // The hours of a day
     std::vector<Week> byday_;   // The days of the week
     std::vector<int> bymonthday_; // The days of the month
     std::vector<int> byyearday_;  // The days of the year
