@@ -5,6 +5,8 @@
 #include "EventManager.h"
 #include <sstream>
 #include <unordered_map>
+#include "entity/Event.h"
+#include "tools/EventRepository.h"
 
 namespace touka {
     std::vector<Event> EventManager::parseICalFormat(std::istringstream& icalDataStream) {
@@ -45,7 +47,29 @@ namespace touka {
     }
 
     String EventManager::exportICalFormat(const std::vector<Event>& evts) {
-
+        
     }
 
+    void EventManager::addEvent(const Event& evt) {
+        
+    }
+
+    void EventManager::deleteEvent(const Event& evt) {
+    }
+
+    std::vector<Event> EventManager::getEventsOnDate(const QDate& date) {
+    }
+
+    std::vector<Event> EventManager::getEventsInRange(const QDate& start, const QDate& end) {
+    }
+
+    std::vector<Event> EventManager::searchEvents(const String& query) {
+    }
+
+    void EventManager::modifyEvent(const Event& oldEvent, const Event& newEvent) {
+    }
+
+    std::vector<EventCategories> EventManager::getEvtCategories() {
+        return EventRepository::getInstance().getCategories();
+    }
 } // touka

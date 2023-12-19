@@ -12,12 +12,15 @@
 #include <QtCore/qpropertyanimation.h>
 
 #include "ui_EventView.h"
+#include "controller/EventManager.h"
+#include "entity/EventCategories.h"
 
 namespace touka {
     EventView::EventView( QWidget *parent) :
         QWidget(parent), ui(new Ui::EventView), is_windows_(false) {
         ui->setupUi(this);
 
+        init();
         QPalette pal(this->palette());
         pal.setColor(QPalette::Window, BACKGROUND_COLOR);
         setAutoFillBackground(true);
@@ -29,6 +32,7 @@ namespace touka {
         QWidget(parent, Qt::Window | Qt::FramelessWindowHint | Qt::WindowStaysOnTopHint), ui(new Ui::EventView), is_windows_(true) {
         ui->setupUi(this);
 
+        init();
         setAttribute(Qt::WA_TranslucentBackground);
         setAttribute(Qt::WA_DeleteOnClose);
         int left, top, right, bottom;
@@ -37,7 +41,13 @@ namespace touka {
         layout()->setContentsMargins(TRIANGLE_HEIGHT, top, right, bottom);
         //register event filter
         qApp->installEventFilter(this);
+    }
 
+    void EventView::init() {
+        auto categories = EventManager::getEvtCategories();
+        for (const auto & category : categories) {
+            ui->cbCategory->addCategory(category);
+        }
     }
 
     auto EventView::playAnimationGroup(QObject* target, const QRect& startGeometry, const QRect& endGeometry,
@@ -142,4 +152,5 @@ namespace touka {
         // Draw the triangle
         painter.drawPolygon(triangle);
     }
+
 } // touka

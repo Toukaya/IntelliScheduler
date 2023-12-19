@@ -91,7 +91,7 @@ padding-left: 10px;
       </spacer>
      </item>
      <item>
-      <widget class="QComboBox" name="cbCategory"/>
+      <widget class="CategoryComboBox" name="cbCategory"/>
      </item>
     </layout>
    </item>
@@ -351,6 +351,13 @@ background-color:rgb(224, 224, 223)
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>CategoryComboBox</class>
+   <extends>QComboBox</extends>
+   <header>widget/event_view/categorycombobox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

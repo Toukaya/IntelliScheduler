@@ -13,6 +13,7 @@ find_package(Qt6 COMPONENTS
         Network
         Test
         Svg
+        Sql
         REQUIRED)
 
 qt_add_resources(RES resources.qrc)
@@ -73,6 +74,10 @@ add_library(intelli_lib STATIC
         src/view/eventview.cpp
         src/view/eventview.h
         src/view/eventview.ui
+        src/tools/EventRepository.cpp
+        src/tools/EventRepository.h
+        src/widget/event_view/categorycombobox.cpp
+        src/widget/event_view/categorycombobox.h
 )
 target_link_libraries(intelli_lib PRIVATE
         Qt::Core
@@ -80,6 +85,7 @@ target_link_libraries(intelli_lib PRIVATE
         Qt::Widgets
         Qt::Network
         Qt::Svg
+        Qt::Sql
 )
 
 add_executable(${PROJECT_NAME} main.cpp ${RES}

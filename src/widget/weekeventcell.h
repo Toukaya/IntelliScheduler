@@ -51,6 +51,8 @@ namespace touka {
         double getMinutePerCol();
 
         int calEvtLabelColCnt(const Time &startTime, const Time &endTime);
+
+        void scanLine();
     };
 } // touka
 
