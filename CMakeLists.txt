@@ -32,16 +32,16 @@ add_library(intelli_lib STATIC
         src/view/mainwindow.cpp
         src/view/mainwindow.h
         src/view/mainwindow.ui
-        src/utils/OpenAIAPI.cpp
-        src/utils/OpenAIAPI.h
+#        src/utils/OpenAIAPI.cpp
+#        src/utils/OpenAIAPI.h
         src/widget/gridcell.cpp
         src/widget/gridcell.h
         src/widget/gridcell.ui
         src/widget/searchline.cpp
         src/widget/searchline.h
         src/widget/searchline.ui
-        src/utils/DateUtil.cpp
-        src/utils/DateUtil.h
+#        src/utils/DateUtil.cpp
+#        src/utils/DateUtil.h
         src/view/weekview.cpp
         src/view/weekview.h
         src/view/weekview.ui
@@ -67,10 +67,10 @@ add_library(intelli_lib STATIC
         src/entity/EventCategories.cpp
         src/entity/EventCategories.h
         src/widget/weekeventcell.ui
-        src/utils/EventUtils.cpp
-        src/utils/EventUtils.h
-        src/utils/EnumUtils.h
-        src/utils/EventUtils.cpp
+#        src/utils/EventUtils.cpp
+#        src/utils/EventUtils.h
+#        src/utils/EnumUtils.h
+#        src/utils/EventUtils.cpp
         src/view/eventview.cpp
         src/view/eventview.h
         src/view/eventview.ui
@@ -85,7 +85,6 @@ target_link_libraries(intelli_lib PRIVATE
         Qt::Widgets
         Qt::Network
         Qt::Svg
-        Qt::Sql
 )
 
 add_executable(${PROJECT_NAME} main.cpp ${RES}
@@ -98,5 +97,9 @@ if (Qt6Test_FOUND)
     add_subdirectory(tests)
 endif()
 
+add_subdirectory(src/utils)
+add_subdirectory(src/dao)
 add_subdirectory(third_party/async_simple)
 target_include_directories(intelli_lib PUBLIC src ${CMAKE_SOURCE_DIR}/third_party/async_simple)
+target_link_libraries(intelli_lib PRIVATE utils)
+target_link_libraries(intelli_lib PRIVATE dao)

@@ -5,15 +5,15 @@
 #include "EventRepository.h"
 
 #include <QtCore/qsettings.h>
-#include <QtSql>
-#include <QSqlDatabase>
+// #include <QtSql>
+// #include <QSqlDatabase>
 
 #include "types.hpp"
 #include "entity/EventCategories.h"
 
 namespace touka {
 
-    EventRepository::EventRepository() : QObject(qApp), database_(std::make_shared<QSqlDatabase>(QSqlDatabase::addDatabase("QSQLITE"))) {
+    EventRepository::EventRepository() : QObject(qApp)/*, database_(std::make_shared<QSqlDatabase>(QSqlDatabase::addDatabase("QSQLITE")))*/ {
     }
 
     EventRepository& EventRepository::getInstance() {
@@ -24,7 +24,7 @@ namespace touka {
     async_simple::Future<void> EventRepository::connectDBSync() {
         connectDB();
     }
-    
+
     async_simple::Future<void> EventRepository::addEvtSync(const Event& evt) {
     }
 
@@ -50,19 +50,19 @@ namespace touka {
         const QSettings settings("config.ini", QSettings::IniFormat);
         const QString filePath = settings.value("database/file").toString();
 
-        database_->setDatabaseName(filePath);
-        database_->setConnectOptions("QSQLITE_BUSY_TIMEOUT=10000");
-
-        if (!database_->open())
-            qDebug() << "Failed to open the database:" << filePath << Qt::endl;
+        // database_->setDatabaseName(filePath);
+        // database_->setConnectOptions("QSQLITE_BUSY_TIMEOUT=10000");
+        //
+        // if (!database_->open())
+        //     qDebug() << "Failed to open the database:" << filePath << Qt::endl;
     }
 
     void EventRepository::disconnectDB() const {
-        database_->close();
+        // database_->close();
     }
 
     void EventRepository::addEvt(const Event& evt) {
-        
+
     }
 
     void EventRepository::deleteEvt(const Event& evt) {

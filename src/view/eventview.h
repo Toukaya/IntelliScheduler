@@ -10,53 +10,57 @@
 #include "types.hpp"
 
 namespace touka {
-    class Event;
+class Event;
 }
 
 class QParallelAnimationGroup;
+class QAbstractItemView;
 
 namespace touka {
-    QT_BEGIN_NAMESPACE
+QT_BEGIN_NAMESPACE
 
-    namespace Ui {
-        class EventView;
-    }
+namespace Ui {
+class EventView;
+}
 
-    QT_END_NAMESPACE
+QT_END_NAMESPACE
 
-    constexpr static int8 TRIANGLE_HEIGHT = 12;
-    constexpr static int8 TRIANGLE_HALF_WEIGHT = 12;
-    constexpr static Color BACKGROUND_COLOR = QColor(240, 240, 240);
+constexpr static int8 TRIANGLE_HEIGHT = 12;
+constexpr static int8 TRIANGLE_HALF_WEIGHT = 12;
+constexpr static Color BACKGROUND_COLOR = QColor(240, 240, 240);
 
-    class EventView : public QWidget {
-        Q_OBJECT
+class EventView : public QWidget {
+  Q_OBJECT
 
-    public:
-        explicit EventView(QWidget* parent = nullptr);
+public:
+  explicit EventView(QWidget *parent = nullptr);
 
-        ~EventView() override;
+  ~EventView() override;
 
-    public slots:
-        static void menu(/*TODO Event infomation param*/QPoint pos, QWidget* parent);
+public slots:
+  static void menu(/*TODO Event infomation param*/ QPoint pos, QWidget *parent);
 
-        bool eventFilter(QObject* watched, QEvent* event) override;
+  bool eventFilter(QObject *watched, QEvent *event) override;
 
-    protected:
-        void paintEvent(QPaintEvent* event) override;
+protected:
+  void paintEvent(QPaintEvent *event) override;
 
-    private:
-        void init();
+private:
+  void init();
 
-        explicit EventView(Event* evt, QWidget* parent = nullptr);
+  explicit EventView(Event *evt, QWidget *parent = nullptr);
 
-        Ui::EventView* ui;
+  Ui::EventView *ui;
 
-        bool is_windows_;
+  bool is_windows_;
 
-        static auto playAnimationGroup(QObject* target, const QRect&startGeometry, const QRect&endGeometry,
-                                       int duration,
-                                       qreal startOpacity, qreal endOpacity) -> QParallelAnimationGroup*;
-    };
-} // touka
+  QSet<QAbstractItemView *> dropdown_views_;
 
-#endif //EVENTVIEW_H
+  static auto playAnimationGroup(QObject *target, const QRect &startGeometry,
+                                 const QRect &endGeometry, int duration,
+                                 qreal startOpacity, qreal endOpacity)
+      -> QParallelAnimationGroup *;
+};
+} // namespace touka
+
+#endif // EVENTVIEW_H

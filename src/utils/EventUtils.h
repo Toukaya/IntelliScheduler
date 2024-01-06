@@ -5,6 +5,7 @@
 #ifndef EVENTUTILS_H
 #define EVENTUTILS_H
 #include "types.hpp"
+#include "EnumUtils.h"
 
 namespace touka {
     enum Priority {

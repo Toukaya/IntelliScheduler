@@ -11,41 +11,33 @@
 namespace touka {
 
 class EventCategories {
-    Color cate_color_;
-    String cate_name_;
-    String cate_description_;
+  Color cate_color_;
+  String cate_name_;
+  String cate_description_;
+
 public:
-    explicit EventCategories(const Color& cate_color, String  cate_name, String  cate_description)
-        : cate_color_(cate_color),
-          cate_name_(std::move(cate_name)),
-          cate_description_(std::move(cate_description)) {
-    }
+  explicit EventCategories(const Color &cate_color, String cate_name,
+                           String cate_description)
+      : cate_color_(cate_color), cate_name_(std::move(cate_name)),
+        cate_description_(std::move(cate_description)) {}
 
-    [[nodiscard]] const Color& getColor() const {
-        return cate_color_;
-    }
+  [[nodiscard]] const Color &getColor() const { return cate_color_; }
 
-    void setColor(const Color& color) {
-        cate_color_ = color;
-    }
+  void setColor(const Color &color) { cate_color_ = color; }
 
-    [[nodiscard]] const String& getName() const {
-        return cate_name_;
-    }
+  [[nodiscard]] const String &getName() const { return cate_name_; }
 
-    void setName(const String& name) {
-        cate_name_ = name;
-    }
+  void setName(const String &name) { cate_name_ = name; }
 
-    [[nodiscard]] const String& getDescription() const {
-        return cate_description_;
-    }
+  [[nodiscard]] const String &getDescription() const {
+    return cate_description_;
+  }
 
-    void setDescription(const String& description) {
-        cate_description_ = description;
-    }
+  void setDescription(const String &description) {
+    cate_description_ = description;
+  }
 };
 
-} // touka
+} // namespace touka
 
-#endif //EVENTCATEGORIES_H
+#endif // EVENTCATEGORIES_H

@@ -7,35 +7,35 @@
 #include "types.hpp"
 
 namespace touka {
-    class Alarm {
-    public:
-        Alarm();
+class Alarm {
+public:
+  Alarm();
 
-        ~Alarm();
+  ~Alarm();
 
-        void setAlarmTime(const DateTime&alarmTime);
+  void setAlarmTime(const DateTime &alarmTime);
 
-        DateTime getAlarmTime() const;
+  DateTime getAlarmTime() const;
 
-        void setAlarmDescription(const String&alarmDescription);
+  void setAlarmDescription(const String &alarmDescription);
 
-        String getAlarmDescription() const;
+  String getAlarmDescription() const;
 
-        void setAlarmDuration(int alarmDuration);
+  void setAlarmDuration(int alarmDuration);
 
-        int getAlarmDuration() const;
+  int getAlarmDuration() const;
 
-        void setAlarmRepeatInterval(int alarmRepeatInterval);
+  void setAlarmRepeatInterval(int alarmRepeatInterval);
 
-        int getAlarmRepeatInterval() const;
+  int getAlarmRepeatInterval() const;
 
-    private:
-        DateTime alarmTime;
-        String alarmDescription;
-        int alarmDuration;
-        int alarmRepeatInterval;
-        String alarmSound;
-    };
-} // touka
+private:
+  DateTime alarmTime;
+  String alarmDescription;
+  int alarmDuration;
+  int alarmRepeatInterval;
+  String alarmSound;
+};
+} // namespace touka
 
-#endif //ALARM_H
+#endif // ALARM_H

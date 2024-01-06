@@ -14,7 +14,7 @@ namespace touka {
         Q_OBJECT
 
     public:
-        explicit CategoryComboBox(QWidget* parent = nullptr);
+        explicit CategoryComboBox(QWidget* parent = nullptr); 
 
         void addCategory(const EventCategories &category);
 
