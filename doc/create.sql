@@ -1,95 +1,79 @@
-
-CREATE TABLE EventCategories
+CREATE TABLE events
 (
-    category_id          INTEGER PRIMARY KEY,
-    category_color       TEXT,
-    category_name        TEXT,
-    category_description TEXT
+    uid           TEXT PRIMARY KEY,
+    summary       TEXT,
+    description   TEXT,
+    status        INTEGER,
+    priority      INTEGER,
+    all_day       BOOLEAN,
+    private       BOOLEAN,
+    dt_start      TEXT,
+    dt_end        TEXT,
+    dt_stamp      TEXT,
+    created       TEXT,
+    last_modified TEXT,
+    tz            TEXT,
+    location      TEXT,
+    alarm_time    TEXT,
+    cate_id       TEXT,
+    FOREIGN KEY (cate_id) REFERENCES event_categories (cate_id)
 );
 
-CREATE TABLE Alarm
+CREATE TABLE event_categories
 (
-    alarm_id              INTEGER PRIMARY KEY,
-    alarm_time            DATETIME,
-    alarm_description     TEXT,
-    alarm_duration        INTEGER,
-    alarm_repeat_interval INTEGER,
-    alarm_sound           TEXT
+    cate_id          TEXT PRIMARY KEY,
+    cate_color       TEXT,
+    cate_name        TEXT
 );
 
-CREATE TABLE Recurrence
+CREATE TABLE recurrences
 (
-    recurrence_id   INTEGER PRIMARY KEY,
-    frequency       INTEGER,
-    until           DATETIME,
-    count           INTEGER,
-    interval        INTEGER,
-    workweek_starts INTEGER
+    event_uid TEXT PRIMARY KEY,
+    freq      INTEGER,
+    until     TEXT,
+    count     INTEGER,
+    interval  INTEGER,
+    FOREIGN KEY (event_uid) REFERENCES events (uid)
 );
 
-CREATE TABLE RecurrenceDays
+CREATE TABLE byday
 (
-    recurrence_id INTEGER REFERENCES Recurrence (recurrence_id),
-    day           INTEGER
+    recurrence_event_uid TEXT,
+    day                  INTEGER,
+    FOREIGN KEY (recurrence_event_uid) REFERENCES recurrences (event_uid)
 );
 
-CREATE TABLE RecurrenceMonthDays
+CREATE TABLE bymonthday
 (
-    recurrence_id INTEGER REFERENCES Recurrence (recurrence_id),
-    month_day     INTEGER
+    recurrence_event_uid TEXT,
+    day                  INTEGER,
+    FOREIGN KEY (recurrence_event_uid) REFERENCES recurrences (event_uid)
 );
 
-CREATE TABLE RecurrenceYearDays
+CREATE TABLE byyearday
 (
-    recurrence_id INTEGER REFERENCES Recurrence (recurrence_id),
-    year_day      INTEGER
+    recurrence_event_uid TEXT,
+    day                  INTEGER,
+    FOREIGN KEY (recurrence_event_uid) REFERENCES recurrences (event_uid)
 );
 
-CREATE TABLE RecurrenceWeekNumbers
+CREATE TABLE byweekno
 (
-    recurrence_id INTEGER REFERENCES Recurrence (recurrence_id),
-    week_number   INTEGER
+    recurrence_event_uid TEXT,
+    week                 INTEGER,
+    FOREIGN KEY (recurrence_event_uid) REFERENCES recurrences (event_uid)
 );
 
-CREATE TABLE RecurrenceMonths
+CREATE TABLE bymonth
 (
-    recurrence_id INTEGER REFERENCES Recurrence (recurrence_id),
-    month         INTEGER
+    recurrence_event_uid TEXT,
+    month                INTEGER,
+    FOREIGN KEY (recurrence_event_uid) REFERENCES recurrences (event_uid)
 );
 
-CREATE TABLE RecurrenceSetPositions
+CREATE TABLE bysetpos
 (
-    recurrence_id INTEGER REFERENCES Recurrence (recurrence_id),
-    set_position  INTEGER
-);
-
-CREATE TABLE Event
-(
-    uid                    INTEGER PRIMARY KEY,
-    summary                TEXT,
-    description            TEXT,
-    classification         TEXT,
-    status                 TEXT,
-    priority               TEXT,
-    start_datetime         DATETIME,
-    end_datetime           DATETIME,
-    stamp_datetime         DATETIME,
-    created_datetime       DATETIME,
-    last_modified_datetime DATETIME,
-    location               TEXT,
-    timezone               TEXT,
-    recurrence_no          INTEGER,
-    base_event_id          INTEGER REFERENCES Event (uid)
-);
-
-CREATE TABLE EventRecurrenceDates
-(
-    event_id        INTEGER REFERENCES Event (uid),
-    recurrence_date DATETIME
-);
-
-CREATE TABLE EventCategories
-(
-    event_id    INTEGER REFERENCES Event (uid),
-    category_id INTEGER REFERENCES EventCategories (category_id)
+    recurrence_event_uid TEXT,
+    position             INTEGER,
+    FOREIGN KEY (recurrence_event_uid) REFERENCES recurrences (event_uid)
 );

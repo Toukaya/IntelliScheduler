@@ -8,6 +8,9 @@
 #include <QWidget>
 
 #include "types.hpp"
+#include "entity/Event.h"
+
+class QDataWidgetMapper;
 
 namespace touka {
 class Event;
@@ -38,23 +41,28 @@ public:
   ~EventView() override;
 
 public slots:
-  static void menu(/*TODO Event infomation param*/ QPoint pos, QWidget *parent);
+  static void eventEditMenu(const EventPtr& evt, QPoint pos, QWidget *parent = nullptr);
+  static void eventEditMenu(const String &evtId, QPoint pos, QWidget *parent = nullptr);
 
-  bool eventFilter(QObject *watched, QEvent *event) override;
+  // bool eventFilter(QObject *watched, QEvent *event) override;
 
 protected:
   void paintEvent(QPaintEvent *event) override;
 
 private:
-  void init();
+  void init() const;
 
-  explicit EventView(Event *evt, QWidget *parent = nullptr);
+  explicit EventView(EventPtr evt, QWidget *parent = nullptr);
 
   Ui::EventView *ui;
 
   bool is_windows_;
 
   QSet<QAbstractItemView *> dropdown_views_;
+
+  std::unique_ptr<QDataWidgetMapper> data_widget_mapper_;
+
+  EventPtr event_;
 
   static auto playAnimationGroup(QObject *target, const QRect &startGeometry,
                                  const QRect &endGeometry, int duration,

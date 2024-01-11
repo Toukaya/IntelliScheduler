@@ -9,19 +9,21 @@
 
 namespace touka {
 QT_BEGIN_NAMESPACE
-namespace Ui { class CanlendarWidget; }
+namespace Ui {
+class CanlendarWidget;
+}
 QT_END_NAMESPACE
 
 class CanlendarWidget : public QCalendarWidget {
-Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit CanlendarWidget(QWidget *parent = nullptr);
-    ~CanlendarWidget() override;
+  explicit CanlendarWidget(QWidget *parent = nullptr);
+  ~CanlendarWidget() override;
 
 private:
-    Ui::CanlendarWidget *ui;
+  Ui::CanlendarWidget *ui;
 };
-} // touka
+} // namespace touka
 
-#endif //CANLENDARWIDGET_H
+#endif // CANLENDARWIDGET_H

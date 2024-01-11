@@ -8,15 +8,16 @@
 #include "categorycombobox.h"
 
 #include <QtGui/qpen.h>
+#include <QListView>
 #include <qpainter.h>
 #include <qpainterpath.h>
 
 #include "entity/EventCategories.h"
 
-// #include "ui_CategoryComboBox.h"
-
 namespace touka {
-CategoryComboBox::CategoryComboBox(QWidget *parent) : QComboBox(parent) {}
+CategoryComboBox::CategoryComboBox(QWidget *parent) : QComboBox(parent) {
+
+}
 
 void CategoryComboBox::addCategory(const EventCategories &category) {
   const auto color = category.getColor();
@@ -41,7 +42,15 @@ void CategoryComboBox::addCategory(const EventCategories &category) {
 
   painter.fillPath(path, QBrush(color));
   addItem(QIcon(pixmap), category.getName());
+  cate_idx_to_id_[count() - 1] = category.get_cate_id();
 }
 
 CategoryComboBox::~CategoryComboBox() = default;
+
+String CategoryComboBox::currentId() const {
+  auto id = cate_idx_to_id_.find(currentIndex());
+  if (id != cate_idx_to_id_.end())
+    return id->second;
+  return {};
+}
 } // namespace touka

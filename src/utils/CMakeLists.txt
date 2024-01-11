@@ -1,11 +1,9 @@
 set(UTILS_SRC
-        DBUtil.h
         DateUtil.h
         EnumUtils.h
         EventFactory.h
         EventUtils.h
         OpenAIAPI.h
-        DBUtil.cpp
         DateUtil.cpp
         EventFactory.cpp
         EventUtils.cpp

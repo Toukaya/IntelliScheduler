@@ -31,17 +31,15 @@ public:
         freq_ = freq;
     }
 
-    [[nodiscard]] const DateTime& get_until() const {
-        return until_;
+    [[nodiscard]] const std::optional<DateTime> &get_until() const {
+      return until_;
     }
 
     void set_until(const DateTime& until) {
         until_ = until;
     }
 
-    [[nodiscard]] int get_count() const {
-        return count_;
-    }
+    [[nodiscard]] std::optional<int> get_count() const { return count_; }
 
     void set_count(const int count) {
         count_ = count;
@@ -103,14 +101,6 @@ public:
         bysetpos_ = bysetpos;
     }
 
-    [[nodiscard]] Week get_wkst() const {
-        return wkst_;
-    }
-
-    void set_wkst(const Week wkst) {
-        wkst_ = wkst;
-    }
-
     friend std::ostream& operator<<(std::ostream& os, const Recurrence& obj) {
         // TODO implement it
         return os;
@@ -132,8 +122,8 @@ public:
 
 private:
     Frequency freq_;            // The frequency of the recurrence
-    DateTime until_;            // The end date of the recurrence
-    int count_;                 // The number of occurrences
+    std::optional<DateTime> until_; // The end date of the recurrence
+    std::optional<int> count_;      // The number of occurrences
     uint16 interval_;           // The interval between each occurrence
     std::vector<Week> byday_;   // The days of the week
     std::vector<int> bymonthday_; // The days of the month
@@ -141,7 +131,7 @@ private:
     std::vector<int> byweekno_;   // The week number of the year
     std::vector<int> bymonth_;    // The months of the year
     std::vector<int> bysetpos_;   // The position of the recurrence set
-    Week wkst_;                   // The day that the workweek starts
+    // Week wkst_;                   // The day that the workweek starts
 
 };
 

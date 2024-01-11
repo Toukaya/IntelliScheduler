@@ -10,8 +10,10 @@
 #include <QtCore/qdatetime.h>
 #include <QtGui/qevent.h>
 #include <qpainter.h>
+#include <QtWidgets/QMenu>
 
 #include "ui_GridCell.h"
+#include "controller/AppManager.h"
 #include "view/eventview.h"
 
 namespace touka {
@@ -19,6 +21,37 @@ GridCell::GridCell(QWidget *parent)
     : QFrame(parent), ui(new Ui::GridCell), is_activate_(false) {
   ui->setupUi(this);
   applyTextColor(COMMON_CELL_TEXT_COLOR);
+  ui->listWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+
+  connect(ui->listWidget, &QListWidget::customContextMenuRequested,
+          [this](const QPoint &pos) {
+            const auto menu = new QMenu(ui->listWidget);
+            const auto actionNewEvt = new QAction(tr("New event"), menu);
+            const auto actionDelEvt = new QAction(tr("Remove event"), menu);
+            connect(actionNewEvt, &QAction::triggered, this, &GridCell::onActionNewEvt);
+            connect(actionDelEvt, &QAction::triggered, this, &GridCell::onActionDelete);
+            menu->addAction(actionNewEvt);
+            // 只有当item不为空时才添加右键菜单
+            if (!ui->listWidget->selectedItems().empty()) {
+              menu->addAction(actionDelEvt);
+            }
+            menu->popup(ui->listWidget->mapToGlobal(pos));
+          });
+
+  // connect(&AppManager::instance(), &AppManager::eventAdded, this, [this](const EventPtr &evt) {
+  //   if (!evt) return;
+  //   ui->listWidget->addEvent(evt);
+  // });
+  connect(&AppManager::instance(), &AppManager::eventModified, this, [&](const EventPtr &evt, const EventPtr &_) {
+    if (!evt) return;
+    const auto date = evt->get_dt_start().date();
+    if (date != date_) return;
+    const auto evts = AppManager::instance().getEventsOfDay(date);
+    ui->listWidget->setEvents(evts);
+  });
+
+  // ui->listWidget->setFrameStyle(NoFrame);
+  // ui->listWidget->setStyleSheet();
 }
 
 GridCell::GridCell(const Date &date, QWidget *parent) : GridCell(parent) {
@@ -29,19 +62,21 @@ GridCell::~GridCell() { delete ui; }
 
 void GridCell::setDate(const Date &date) {
   date_ = date;
+  const auto evts = AppManager::instance().getEventsOfDay(date);
+  ui->listWidget->setEvents(evts);
   refresh();
 }
 
 bool GridCell::isActivate() const { return is_activate_; }
 
-inline void GridCell::setDayOfMonthText() const {
+inline void GridCell::setDayOfMonthText(bool showMonthStr) const {
   auto showStr = date_.toString("d");
-  if (date_.day() == 1) {
+  if (showMonthStr) {
+    QString monthStr;
     const auto month = static_cast<Month>(date_.month());
     if (QLocale::system().name().mid(0, 2) == "en")
-      ui->lbMonth->setText(DateUtil::getLiteralMonth(month).mid(0, 3) + ' ');
-  } else {
-    ui->lbMonth->clear();
+      monthStr = DateUtil::getLiteralMonth(month).mid(0, 3) + ' ';
+    showStr.prepend(monthStr);
   }
 
   ui->lbDate->setText(showStr);
@@ -60,19 +95,21 @@ inline void GridCell::setCurrentDayStyles() const {
       "QLabel {"
       "	background-image: url(:/icon/resource/icon/circle.svg);"
       "	background-repeat: none;"
-      "	background-position: center center;"
+      "	background-position: center right;"
       " color: rgb(255, 255, 255);"
       "}");
 }
 
 void GridCell::refresh() {
-  setDayOfMonthText();
   if (isWeekend())
     setWeekendStyles();
-  if (date_ == Date::currentDate())
+  if (date_ == Date::currentDate()) {
+    setDayOfMonthText();
     setCurrentDayStyles();
-  else
+  } else {
+    setDayOfMonthText(date_.day() == 1);
     ui->lbDate->setStyleSheet("");
+  }
 }
 
 void GridCell::setActivate(const bool isActivate) {
@@ -91,14 +128,35 @@ bool GridCell::isWeekend() const {
   return dayOfWeek == Qt::Saturday || dayOfWeek == Qt::Sunday;
 }
 
-void GridCell::mouseReleaseEvent(QMouseEvent *event) {
-  // 判断用户按下的是哪一个鼠标键
-  if (event->button() == Qt::RightButton)
-    EventView::menu(QCursor::pos(), this);
-  QFrame::mouseReleaseEvent(event);
+// void GridCell::mouseReleaseEvent(QMouseEvent *event) {
+//   if (event->button() == Qt::LeftButton)
+//     onActionNewEvt();
+//   QFrame::mouseReleaseEvent(event);
+// }
+
+void GridCell::contextMenuEvent(QContextMenuEvent* event) {
+  QFrame::contextMenuEvent(event);
 }
 
 void GridCell::updateEvent(const Event &evt) {}
+
+void GridCell::selectOut() const {
+  ui->listWidget->clearSelection();
+}
+
+void GridCell::onActionNewEvt() const {
+  const auto evt = AppManager::createEmptyEvt(QDateTime(date_, QTime::currentTime()));
+  if (!evt) return;
+  ui->listWidget->addEvent(evt);
+  EventView::eventEditMenu(evt, QCursor::pos(), ui->listWidget);
+}
+
+void GridCell::onActionDelete() const {
+  auto items = ui->listWidget->selectedItems();
+  if (items.empty()) return;
+  auto id = ui->listWidget->removeEvt(ui->listWidget->row(items[0]));
+  AppManager::instance().deleteEvent(id.toStdString().c_str());
+}
 
 void GridCell::applyTextColor(const QColor &color) const {
   QPalette pal(ui->lbDate->palette());

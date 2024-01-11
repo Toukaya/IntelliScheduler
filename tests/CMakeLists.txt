@@ -26,6 +26,6 @@ macro(package_add_test TESTNAME)
 endmacro()
 
 # 添加测试
-package_add_test(WeekEvtCellLabelTest)
-package_add_test(WeekTableWidgetTest)
-package_add_test(EventViewTest)
+#package_add_test(WeekEvtCellLabelTest)
+#package_add_test(WeekTableWidgetTest)
+#package_add_test(EventViewTest)

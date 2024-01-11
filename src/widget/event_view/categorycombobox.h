@@ -7,6 +7,8 @@
 
 #include <QComboBox>
 
+#include "types.hpp"
+
 namespace touka {
     class EventCategories;
 
@@ -19,6 +21,11 @@ namespace touka {
         void addCategory(const EventCategories &category);
 
         ~CategoryComboBox() override;
+
+        String currentId() const;
+
+    private:
+        std::unordered_map<int, String> cate_idx_to_id_;
     };
 } // touka
 

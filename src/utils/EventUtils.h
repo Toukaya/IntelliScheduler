@@ -9,7 +9,7 @@
 
 namespace touka {
     enum Priority {
-        UNDEFINED = 0,
+        UNDEFINED = -1,
         HIGHEST = 1,
         HIGH = 2,
         ABOVE_NORMAL = 3,
@@ -27,8 +27,8 @@ namespace touka {
         CONFIDENTIAL
     };
 
-    enum class Status {
-        TENTATIVE,
+    enum Status {
+        TENTATIVE=0,
         CONFIRMED,
         CANCELLED
     };

@@ -56,14 +56,12 @@ add_library(intelli_lib STATIC
         src/widget/weektablewidget.ui
         src/widget/gridview.cpp
         src/widget/gridview.h
-        src/controller/EventManager.cpp
-        src/controller/EventManager.h
-        src/interface/IEventSubscriber.cpp
-        src/interface/IEventSubscriber.h
+        src/controller/AppManager.cpp
+        src/controller/AppManager.h
+#        src/interface/IEventSubscriber.cpp
+#        src/interface/IEventSubscriber.h
         src/entity/Recurrence.cpp
         src/entity/Recurrence.h
-        src/entity/Alarm.cpp
-        src/entity/Alarm.h
         src/entity/EventCategories.cpp
         src/entity/EventCategories.h
         src/widget/weekeventcell.ui
@@ -74,10 +72,41 @@ add_library(intelli_lib STATIC
         src/view/eventview.cpp
         src/view/eventview.h
         src/view/eventview.ui
-        src/tools/EventRepository.cpp
-        src/tools/EventRepository.h
         src/widget/event_view/categorycombobox.cpp
         src/widget/event_view/categorycombobox.h
+        src/controller/Services/EventService.cpp
+        src/controller/Services/EventService.h
+        src/controller/Services/EventSubscriptionService.cpp
+        src/controller/Services/EventSubscriptionService.h
+        src/controller/Services/EventICalFormatService.cpp
+        src/controller/Services/EventICalFormatService.h
+        src/db/DBManager.cpp
+        src/db/DBManager.h
+        src/widget/event_view/repeatdialog.cpp
+        src/widget/event_view/repeatdialog.h
+        src/widget/event_view/repeatdialog.ui
+        src/widget/eventlistwidget.cpp
+        src/widget/eventlistwidget.h
+        src/widget/eventlistitem.cpp
+        src/widget/eventlistitem.h
+        src/widget/eventlistitem.ui
+        src/controller/Services/EventReminderService.cpp
+        src/controller/Services/EventReminderService.h
+        src/AppConfig.hpp
+        src/widget/event_view/customalertdialog.cpp
+        src/widget/event_view/customalertdialog.h
+        src/widget/event_view/customalertdialog.ui
+        #        src/utils/DBUtil.h
+#        src/utils/DateUtil.h
+#        src/utils/EnumUtils.h
+#        src/utils/EventFactory.h
+#        src/utils/EventUtils.h
+#        src/utils/OpenAIAPI.h
+#        src/utils/DBUtil.cpp
+#        src/utils/DateUtil.cpp
+#        src/utils/EventFactory.cpp
+#        src/utils/EventUtils.cpp
+#        src/utils/OpenAIAPI.cpp
 )
 target_link_libraries(intelli_lib PRIVATE
         Qt::Core
@@ -85,21 +114,25 @@ target_link_libraries(intelli_lib PRIVATE
         Qt::Widgets
         Qt::Network
         Qt::Svg
+        Qt::Sql
 )
 
-add_executable(${PROJECT_NAME} main.cpp ${RES}
-        src/controller/EventManager.cpp)
+add_executable(${PROJECT_NAME} main.cpp ${RES})
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt::Widgets  async_simple intelli_lib )
+#set_target_properties(${PROJECT_NAME} PROPERTIES
+#        MACOSX_BUNDLE TRUE
+#)
+
+add_subdirectory(third_party/async_simple)
+add_subdirectory(src/utils)
+target_link_libraries(intelli_lib PRIVATE utils)
+target_link_libraries(${PROJECT_NAME} PRIVATE Qt::Widgets async_simple intelli_lib )
+
 
 if (Qt6Test_FOUND)
     enable_testing()
     add_subdirectory(tests)
 endif()
 
-add_subdirectory(src/utils)
-add_subdirectory(src/dao)
-add_subdirectory(third_party/async_simple)
+
 target_include_directories(intelli_lib PUBLIC src ${CMAKE_SOURCE_DIR}/third_party/async_simple)
-target_link_libraries(intelli_lib PRIVATE utils)
-target_link_libraries(intelli_lib PRIVATE dao)

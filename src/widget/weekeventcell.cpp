@@ -29,8 +29,13 @@ namespace touka {
     void WeekEventCell::addEvent(const std::shared_ptr<Event>& evt) {
         if (!evt) return;
         auto label = new WeekEvtCellLabel(this);
-        auto color = evt->get_categories().getColor();
-        label->setColor(color);
+        auto category = evt->get_categories();
+        if (category) {
+            const auto color = evt->get_categories()->getColor();
+            label->setColor(color);
+        } else {
+            label->setColor(Qt::transparent);
+        }
 
         // auto height =
         // label->setFixedHeight()

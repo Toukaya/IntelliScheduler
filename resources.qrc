@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="icon">
+    <file>resource/icon.svg</file>
+    <file>resource/icon/calendar_month.svg</file>
+    <file>resource/icon/expand_all.svg</file>
     <file>resource/icon/circle.svg</file>
     <file>resource/icon/add_event.svg</file>
     <file>resource/icon/event.svg</file>

@@ -46,12 +46,20 @@ namespace touka {
         [[nodiscard]] inline bool isWeekend() const;
 
     protected:
-        void mouseReleaseEvent(QMouseEvent* event) override;
+        // void mouseReleaseEvent(QMouseEvent* event) override;
+
+        void contextMenuEvent(QContextMenuEvent* event) override;
 
     public slots:
         void refresh();
 
         void updateEvent(const Event &evt);
+
+        void selectOut() const;
+
+        void onActionNewEvt() const;
+
+        void onActionDelete() const;
 
     private:
         Ui::GridCell *ui;
@@ -60,7 +68,7 @@ namespace touka {
 
         void applyTextColor(const QColor &color) const;
 
-        void setDayOfMonthText() const;
+        void setDayOfMonthText(bool showMonthStr = false) const;
         void setWeekendStyles();
         void setCurrentDayStyles() const;
 

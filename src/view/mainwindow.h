@@ -6,36 +6,44 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSystemTrayIcon>
 
 namespace touka {
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui {
+class MainWindow;
+}
 QT_END_NAMESPACE
 
-    class MonthView;
-    class WeekView;
+class MonthView;
+class WeekView;
 
 class MainWindow : public QMainWindow {
-Q_OBJECT
+  Q_OBJECT
 
 public:
-    explicit MainWindow(QWidget *parent = nullptr);
-    ~MainWindow() override;
+  explicit MainWindow(QWidget *parent = nullptr);
+  ~MainWindow() override;
 
 private:
-
-    void pushWidget2StackView(QWidget *widget) const;
+  void pushWidget2StackView(QWidget *widget) const;
 
 public slots:
 
-    void goMonthView();
+  void goMonthView();
+
+protected:
+  void closeEvent(QCloseEvent *event) override;
+
+private slots:
+  void trayIconActivated(QSystemTrayIcon::ActivationReason reason);
 
 private:
-    Ui::MainWindow *ui;
+  Ui::MainWindow *ui;
 
-    std::unique_ptr<MonthView> month_view_;
-    std::unique_ptr<WeekView> week_view_;
+  std::unique_ptr<MonthView> month_view_;
+  std::unique_ptr<WeekView> week_view_;
 };
-} // touka
+} // namespace touka
 
-#endif //MAINWINDOW_H
+#endif // MAINWINDOW_H
