@@ -5,12 +5,12 @@
 #ifndef EVENTMANAGER_H
 #define EVENTMANAGER_H
 
-#include <async_simple/coro/Lazy.h>
+// #include <async_simple/coro/Lazy.h>
 
-#include "types.hpp"
-#include "db/DBManager.h"
 #include "Services/EventReminderService.h"
 #include "Services/EventService.h"
+#include "db/DBManager.h"
+#include "types.hpp"
 
 class QSignalMapper;
 
@@ -24,11 +24,12 @@ public:
 
   static CategoryPtrList getEvtCategories();
 
-  static CategoryPtr getEvtCategoryById(const char* categoryId);
+  static CategoryPtr getEvtCategoryById(const char *categoryId);
 
   static CategoryPtr getEvtCategoryByName(const String &categoryName);
 
-  static EventPtr createEmptyEvt(const std::optional<DateTime>&startTime = std::nullopt);
+  static EventPtr
+  createEmptyEvt(const std::optional<DateTime> &startTime = std::nullopt);
 
   // // TODO inplement getCategorisedSchedule param: lastMonthBusySchedule
   // static std::vector<Event>
@@ -48,6 +49,8 @@ signals:
   void categoryDeleted(const CategoryPtr &category);
   void categoryModified(const CategoryPtr &oldCategory,
                         const CategoryPtr &newCategory);
+
+  void reminderTriggered(const EventPtr &evt);
 
 public slots:
   void addEvent(const EventPtr &evt);
@@ -73,10 +76,10 @@ private:
   static DBManager db_manager_;
 
 public:
-  AppManager(const AppManager&) = delete;
-  AppManager(AppManager&&) = delete;
-  AppManager& operator=(const AppManager&) = delete;
-  AppManager& operator=(AppManager&& other) = delete;
+  AppManager(const AppManager &) = delete;
+  AppManager(AppManager &&) = delete;
+  AppManager &operator=(const AppManager &) = delete;
+  AppManager &operator=(AppManager &&other) = delete;
 };
 
 } // namespace touka

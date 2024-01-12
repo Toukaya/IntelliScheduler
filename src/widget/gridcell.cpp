@@ -38,8 +38,10 @@ GridCell::GridCell(QWidget *parent)
             menu->popup(ui->listWidget->mapToGlobal(pos));
           });
 
-  // connect(&AppManager::instance(), &AppManager::eventAdded, this, [this](const EventPtr &evt) {
+  // connect(&AppManager::instance(), &AppManager::eventAdded, this, [&](const EventPtr &evt) {
   //   if (!evt) return;
+  //   const auto date = evt->get_dt_start().date();
+  //   if (date != date_) return;
   //   ui->listWidget->addEvent(evt);
   // });
   connect(&AppManager::instance(), &AppManager::eventModified, this, [&](const EventPtr &evt, const EventPtr &_) {
@@ -147,7 +149,7 @@ void GridCell::selectOut() const {
 void GridCell::onActionNewEvt() const {
   const auto evt = AppManager::createEmptyEvt(QDateTime(date_, QTime::currentTime()));
   if (!evt) return;
-  ui->listWidget->addEvent(evt);
+  // ui->listWidget->addEvent(evt);
   EventView::eventEditMenu(evt, QCursor::pos(), ui->listWidget);
 }
 
@@ -156,6 +158,15 @@ void GridCell::onActionDelete() const {
   if (items.empty()) return;
   auto id = ui->listWidget->removeEvt(ui->listWidget->row(items[0]));
   AppManager::instance().deleteEvent(id.toStdString().c_str());
+}
+
+void GridCell::setItemSelectable(const bool isSelectable) const {
+  if (isSelectable)
+    ui->listWidget->setSelectionMode(QAbstractItemView::SingleSelection);
+  else {
+    ui->listWidget->clearSelection();
+    ui->listWidget->setSelectionMode(QAbstractItemView::NoSelection);
+  }
 }
 
 void GridCell::applyTextColor(const QColor &color) const {

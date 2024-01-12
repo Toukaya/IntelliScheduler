@@ -27,6 +27,7 @@ EventListWidget::~EventListWidget()=default;
 
 void EventListWidget::addEvent(const EventPtr& evt) {
     if (!evt) return;
+    // if (uids_.contains(evt->get_uid())) return;
     auto label = new EventListItem(this);
     label->setName(evt->get_summary());
     if (!evt->is_all_day())
@@ -44,6 +45,7 @@ void EventListWidget::addEvent(const EventPtr& evt) {
         }
         )");
 
+    // uids_.insert(evt->get_uid());
     labels_.push_back(label);
     refresh();
 }
@@ -51,6 +53,7 @@ void EventListWidget::addEvent(const EventPtr& evt) {
 void EventListWidget::addEvents(const EventPtrList& evts) {
     for (const auto & evt : evts) {
         if (!evt) continue;
+        // if (uids_.contains(evt->get_uid())) continue;
         auto label = new EventListItem(this);
         label->setName(evt->get_summary());
         label->set_evt_id(evt->get_uid());
@@ -66,6 +69,7 @@ void EventListWidget::addEvents(const EventPtrList& evts) {
         //     border-radius: 4px;
         // }
         // )");
+        // uids_.insert(evt->get_uid());
         labels_.push_back(label);
     }
     refresh();
@@ -104,18 +108,21 @@ void EventListWidget::refresh() {
 void EventListWidget::clearEvent() {
     clear();
     labels_.clear();
+    // uids_.clear();
     update();
 }
 
 void EventListWidget::setEvents(const EventPtrList& evts) {
     clear();
     labels_.clear();
+    // uids_.clear();
     addEvents(evts);
 }
 
 QString EventListWidget::removeEvt(const int idx) {
     if (idx < 0 || idx >= labels_.size()) return "";
     auto uid = labels_[idx]->get_evt_id();
+    // uids_.erase(uid);
     labels_.erase(labels_.begin() + idx);
     takeItem(idx);
     update();
@@ -131,9 +138,11 @@ void EventListWidget::mousePressEvent(QMouseEvent* event) {
             EventView::eventEditMenu(uid, QCursor::pos(), this);
         }
     }
-    item->setSelected(true);
 
-    QListWidget::mousePressEvent(event);
+    if (item->isSelected()) {
+        event->ignore();
+    } else
+        QListWidget::mousePressEvent(event);
 }
 
 void EventListWidget::update() const {
@@ -181,5 +190,12 @@ void EventListWidget::mouseDoubleClickEvent(QMouseEvent* event) {
 void EventListWidget::resizeEvent(QResizeEvent* e) {
     update();
     QListWidget::resizeEvent(e);
+}
+
+void EventListWidget::focusOutEvent(QFocusEvent* event) {
+    QListWidget::focusOutEvent(event);
+    if (event->reason() != Qt::PopupFocusReason) {
+        clearSelection();
+    }
 }
 } // touka

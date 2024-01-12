@@ -61,6 +61,8 @@ namespace touka {
 
         void onActionDelete() const;
 
+        void setItemSelectable(bool isSelectable) const;
+
     private:
         Ui::GridCell *ui;
         Date date_;

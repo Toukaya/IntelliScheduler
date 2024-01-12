@@ -1,12 +1,14 @@
 cmake_minimum_required(VERSION 3.27)
-project(IntelliScheduler CXX)
+project(IntelliScheduler VERSION 0.82 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 COMPONENTS
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS
         Core
         Gui
         Widgets
@@ -14,11 +16,13 @@ find_package(Qt6 COMPONENTS
         Test
         Svg
         Sql
-        REQUIRED)
+)
 
 qt_add_resources(RES resources.qrc)
 
-add_library(intelli_lib STATIC
+set(PROJECT_SOURCES
+        main.cpp
+        ${RES}
         src/core/scheduler.hpp
         src/types.hpp
         src/entity/Event.cpp
@@ -96,43 +100,88 @@ add_library(intelli_lib STATIC
         src/widget/event_view/customalertdialog.cpp
         src/widget/event_view/customalertdialog.h
         src/widget/event_view/customalertdialog.ui
-        #        src/utils/DBUtil.h
-#        src/utils/DateUtil.h
-#        src/utils/EnumUtils.h
-#        src/utils/EventFactory.h
-#        src/utils/EventUtils.h
-#        src/utils/OpenAIAPI.h
-#        src/utils/DBUtil.cpp
-#        src/utils/DateUtil.cpp
-#        src/utils/EventFactory.cpp
-#        src/utils/EventUtils.cpp
-#        src/utils/OpenAIAPI.cpp
-)
-target_link_libraries(intelli_lib PRIVATE
-        Qt::Core
-        Qt::Gui
-        Qt::Widgets
-        Qt::Network
-        Qt::Svg
-        Qt::Sql
+        src/utils/DateUtil.cpp
+        src/utils/EnumUtils.h
+        src/utils/EventUtils.h
+        src/utils/OpenAIAPI.h
+        src/utils/DateUtil.cpp
+        src/utils/EventUtils.cpp
+        src/utils/OpenAIAPI.cpp
 )
 
-add_executable(${PROJECT_NAME} main.cpp ${RES})
-
-#set_target_properties(${PROJECT_NAME} PROPERTIES
-#        MACOSX_BUNDLE TRUE
-#)
-
-add_subdirectory(third_party/async_simple)
-add_subdirectory(src/utils)
-target_link_libraries(intelli_lib PRIVATE utils)
-target_link_libraries(${PROJECT_NAME} PRIVATE Qt::Widgets async_simple intelli_lib )
-
-
-if (Qt6Test_FOUND)
-    enable_testing()
-    add_subdirectory(tests)
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_executable(${PROJECT_NAME}
+            MANUAL_FINALIZATION
+            ${PROJECT_SOURCES}
+    )
+    # Define target properties for Android with Qt 6 as:
+    #    set_property(TARGET IntelliScheduler APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+    #                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
+    # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+else()
+    if(ANDROID)
+        add_library(${PROJECT_NAME} SHARED
+                ${PROJECT_SOURCES}
+        )
+        # Define properties for Android with Qt 5 after find_package() calls as:
+        #    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+    else()
+        add_executable(${PROJECT_NAME}
+                ${PROJECT_SOURCES}
+        )
+    endif()
 endif()
 
+#add_executable(${PROJECT_NAME} main.cpp ${RES})
 
-target_include_directories(intelli_lib PUBLIC src ${CMAKE_SOURCE_DIR}/third_party/async_simple)
+
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+            ${BUNDLE_ID_OPTION}
+            MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+            MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+            MACOSX_BUNDLE TRUE
+            WIN32_EXECUTABLE TRUE
+    )
+
+    include(GNUInstallDirs)
+    install(TARGETS ${PROJECT_NAME}
+            BUNDLE DESTINATION .
+            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
+
+    if(QT_VERSION_MAJOR EQUAL 6)
+        qt_finalize_executable(IntelliScheduler)
+    endif()
+#add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+#        COMMAND /opt/homebrew/Cellar/qt/6.6.1/bin/macdeployqt
+#        $<TARGET_BUNDLE_DIR:${PROJECT_NAME}> -always-overwrite
+#        COMMENT "Running macdeployqt..."
+#)
+
+#add_subdirectory(third_party/async_simple)
+#add_subdirectory(src/utils)
+#target_link_libraries(${PROJECT_NAME} PRIVATE utils)
+#target_link_libraries(${PROJECT_NAME} PRIVATE Qt::Widgets #[[async_simple]] #[[intelli_lib]] )
+else ()
+    set_target_properties(${PROJECT_NAME} PROPERTIES
+            MACOSX_BUNDLE FALSE
+            WIN32_EXECUTABLE FALSE
+    )
+    if (Qt6Test_FOUND)
+        enable_testing()
+        add_subdirectory(tests)
+    endif()
+endif()
+
+target_link_libraries(${PROJECT_NAME} PRIVATE
+        Qt${QT_VERSION_MAJOR}::Core
+        Qt${QT_VERSION_MAJOR}::Gui
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Network
+        Qt${QT_VERSION_MAJOR}::Svg
+        Qt${QT_VERSION_MAJOR}::Sql
+)
+
+target_include_directories(${PROJECT_NAME} PUBLIC src #[[${CMAKE_SOURCE_DIR}/third_party/async_simple]])

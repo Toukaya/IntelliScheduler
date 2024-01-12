@@ -15,7 +15,7 @@ class QSqlDatabase;
 namespace touka {
 class Recurrence;
 
-constexpr static std::string_view DB_DIR = "./storage.db";
+constexpr static std::string_view DB_DIR = "storage.db";
 
 class DBManager {
 public:
@@ -87,13 +87,15 @@ private:
 
   EventPtr createEventFromQuery(const QSqlQuery&query);
 
-  void readCatefories();
+  void readCategories();
 
   void readEvents();
 
   std::unordered_map<String, EventPtr> event_cache_;
   std::unordered_map<String, CategoryPtr> category_cache_;
   std::unordered_map<String, std::shared_ptr<Recurrence>> rrule_cache_;
+
+  CategoryPtr default_category_;
   std::unique_ptr<QSqlDatabase> db_;
 };
 

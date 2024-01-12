@@ -41,6 +41,7 @@ MonthView::MonthView(QWidget *parent) : QWidget(parent), ui(new Ui::MonthView) {
     const auto date = QDate::currentDate();
     navigateTo(date.year(), static_cast<Month>(date.month()));
   });
+
 }
 
 MonthView::~MonthView() { delete ui; }

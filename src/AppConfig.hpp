@@ -17,6 +17,7 @@ namespace AppConfig {
   constexpr static std::string_view appName() {
     return "Schedule";
   }
+
 }
 
 #endif //APPCONFIG_HPP

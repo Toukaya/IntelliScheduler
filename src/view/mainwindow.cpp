@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
   pushWidget2StackView(month_view_.get());
   // TODO this is temp code, need to be removed
   ui->viewBtngroupFrame->setHidden(true);
-  ui->btnQuickCreate->setHidden(true);
+  // ui->btnQuickCreate->setHidden(true);
 
   QPalette pal(this->palette());
   pal.setColor(QPalette::Window, Qt::white);
@@ -34,14 +34,17 @@ MainWindow::MainWindow(QWidget *parent)
 
   setWindowTitle(QString::fromStdString(std::string(AppConfig::appName())));
 
-  // 创建系统托盘图标
+  // create tray icon
   const auto trayIcon = AppConfig::getTrayIcon();
   trayIcon->setToolTip(
       QString::fromStdString(std::string(AppConfig::appName())));
   connect(trayIcon.get(), &QSystemTrayIcon::activated, this,
           &MainWindow::trayIconActivated);
+  // show message when clicked
+  auto msg = [trayIcon] {trayIcon->showMessage("test", "test", QSystemTrayIcon::Information, 1000);};
+  connect(ui->btnQuickCreate, &QPushButton::clicked, trayIcon.get(), msg);
 
-  // 创建托盘菜单
+  // create tray menu
   const auto trayMenu = new QMenu(this);
   const auto showAction = new QAction(tr("Show Window"), this);
   const auto quitAction = new QAction(tr("Quit"), this);
@@ -51,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
   trayMenu->addSeparator();
   trayMenu->addAction(quitAction);
   trayIcon->setContextMenu(trayMenu);
-  // 显示系统托盘图标
+  // show tray icon
   trayIcon->show();
 }
 
@@ -66,6 +69,19 @@ void MainWindow::pushWidget2StackView(QWidget *widget) const {
 }
 
 void MainWindow::goMonthView() {}
+
+// void MainWindow::showTrayIconMessage(const QString& title, const QString& msg, QSystemTrayIcon::MessageIcon icon,
+//   int msecs) {
+//   const auto trayIcon = AppConfig::getTrayIcon();
+//   trayIcon->showMessage(title, msg, icon, msecs);
+// }
+
+void MainWindow::showTrayIconMessage(const EventPtr& evt) {
+  if (!evt) return;
+  const auto trayIcon = AppConfig::getTrayIcon();
+  trayIcon->showMessage(evt->get_summary(), evt->get_description(),
+    QSystemTrayIcon::Information, 5000);
+}
 
 void MainWindow::closeEvent(QCloseEvent *event) {
   hide();

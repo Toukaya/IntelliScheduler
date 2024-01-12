@@ -8,6 +8,8 @@
 #include <QMainWindow>
 #include <QSystemTrayIcon>
 
+#include "entity/Event.h"
+
 namespace touka {
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -31,6 +33,12 @@ private:
 public slots:
 
   void goMonthView();
+
+  // static void showTrayIconMessage(const QString &title, const QString &msg,
+  //                                 QSystemTrayIcon::MessageIcon icon,
+  //                                 int msecs = 1000);
+
+  static void showTrayIconMessage(const EventPtr &evt);
 
 protected:
   void closeEvent(QCloseEvent *event) override;

@@ -3,11 +3,13 @@
 //
 
 #include "DBManager.h"
-#include <QSqlDatabase>
 #include <QFile>
-#include <QUuid>
+#include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QUuid>
+#include <QStandardPaths>
+#include <QDir>
 
 #include "entity/Event.h"
 
@@ -15,7 +17,7 @@ namespace touka {
 
 void DBManager::init() {
   const static QStringList CREATE_TABLE_SQLS = {
-    R"(
+      R"(
 CREATE TABLE IF NOT EXISTS events
 (
     uid           TEXT PRIMARY KEY,
@@ -35,7 +37,7 @@ CREATE TABLE IF NOT EXISTS events
     cate_id       TEXT,
     FOREIGN KEY (cate_id) REFERENCES event_categories (cate_id)
 );)",
-    R"(
+      R"(
 CREATE TABLE IF NOT EXISTS event_categories
 (
     cate_id          TEXT PRIMARY KEY,
@@ -43,7 +45,7 @@ CREATE TABLE IF NOT EXISTS event_categories
     cate_name        TEXT
 );
 )",
-    R"(
+      R"(
 CREATE TABLE IF NOT EXISTS recurrences
 (
     event_uid TEXT PRIMARY KEY,
@@ -54,7 +56,7 @@ CREATE TABLE IF NOT EXISTS recurrences
     FOREIGN KEY (event_uid) REFERENCES events (uid)
 );
 )",
-    R"(
+      R"(
 CREATE TABLE IF NOT EXISTS byday
 (
     recurrence_event_uid TEXT,
@@ -62,14 +64,14 @@ CREATE TABLE IF NOT EXISTS byday
     FOREIGN KEY (recurrence_event_uid) REFERENCES recurrences (event_uid)
 );
 )",
-    R"(
+      R"(
 CREATE TABLE IF NOT EXISTS bymonthday
 (
     recurrence_event_uid TEXT,
     day                  INTEGER,
     FOREIGN KEY (recurrence_event_uid) REFERENCES recurrences (event_uid)
 );)",
-    R"(
+      R"(
 CREATE TABLE IF NOT EXISTS byyearday
 (
     recurrence_event_uid TEXT,
@@ -77,7 +79,7 @@ CREATE TABLE IF NOT EXISTS byyearday
     FOREIGN KEY (recurrence_event_uid) REFERENCES recurrences (event_uid)
 );
 )",
-    R"(
+      R"(
 CREATE TABLE IF NOT EXISTS byweekno
 (
     recurrence_event_uid TEXT,
@@ -85,7 +87,7 @@ CREATE TABLE IF NOT EXISTS byweekno
     FOREIGN KEY (recurrence_event_uid) REFERENCES recurrences (event_uid)
 );
 )",
-    R"(
+      R"(
 CREATE TABLE IF NOT EXISTS bymonth
 (
     recurrence_event_uid TEXT,
@@ -93,7 +95,7 @@ CREATE TABLE IF NOT EXISTS bymonth
     FOREIGN KEY (recurrence_event_uid) REFERENCES recurrences (event_uid)
 );
 )",
-    R"(
+      R"(
 CREATE TABLE IF NOT EXISTS bysetpos
 (
     recurrence_event_uid TEXT,
@@ -102,7 +104,9 @@ CREATE TABLE IF NOT EXISTS bysetpos
 );)"};
 
   db_ = std::make_unique<QSqlDatabase>(QSqlDatabase::addDatabase("QSQLITE"));
-  db_->setDatabaseName(DB_DIR.data());
+  QString writableLocation = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+  QString databasePath = writableLocation + QDir::separator() + DB_DIR.data();
+  db_->setDatabaseName(databasePath);
   db_->setConnectOptions("QSQLITE_BUSY_TIMEOUT=10000");
   const bool dbExists = QFile::exists(DB_DIR.data());
 
@@ -118,27 +122,28 @@ CREATE TABLE IF NOT EXISTS bysetpos
     }
   }
 
-  if (dbExists) return;
+  if (dbExists)
+    return;
   QStringList queries;
   queries << "INSERT INTO event_categories VALUES('0', '#1E90FF', 'default');"
           << "INSERT INTO event_categories VALUES('1', '#C25656', 'birthday');";
 
-  for (const auto& q : queries)
+  for (const auto &q : queries)
     if (!query.exec(q))
       qCritical() << "Failed to execute query:" << query.lastError().text();
-
 }
 
-DBManager::DBManager() {
+DBManager::DBManager() : default_category_(std::make_shared<EventCategories>("0", QColor("1E90FF"), "default")) {
   init();
-  readCatefories();
+    readCategories();
   readEvents();
 }
 
 DBManager::~DBManager() { db_->close(); }
 
 bool DBManager::addEvent(const EventPtr &event) {
-  if (!event) return false;
+  if (!event)
+    return false;
   event->set_uid(generateUID());
   event->set_created(QDateTime::currentDateTime());
   event->set_last_modified(event->get_created());
@@ -162,7 +167,8 @@ bool DBManager::addEvent(const EventPtr &event) {
   query.addBindValue(event->get_tz().id());
   query.addBindValue(event->get_location());
   const auto alarmTimeOptional = event->get_alarm_time();
-  query.addBindValue(alarmTimeOptional ? alarmTimeOptional.value() : QVariant(QDateTime()));
+  query.addBindValue(alarmTimeOptional ? alarmTimeOptional.value()
+                                       : QVariant(QDateTime()));
   if (event->get_categories())
     query.addBindValue(event->get_categories()->get_cate_id());
   else
@@ -177,12 +183,15 @@ bool DBManager::addEvent(const EventPtr &event) {
 
 bool DBManager::updateEvent(const EventPtr &existingEvent,
                             const EventPtr &newEvent) {
-  if (!existingEvent || !newEvent) return false;
-  return updateEventById(existingEvent->get_uid().toStdString().c_str(), newEvent);
+  if (!existingEvent || !newEvent)
+    return false;
+  return updateEventById(existingEvent->get_uid().toStdString().c_str(),
+                         newEvent);
 }
 
 bool DBManager::updateEventById(const char *eventId, const EventPtr &newEvent) {
-  if (!eventId || !newEvent) return false;
+  if (!eventId || !newEvent)
+    return false;
   QSqlQuery query(*db_);
   query.prepare(
       "UPDATE events SET summary = ?, description = ?, status = ?, priority = "
@@ -201,7 +210,8 @@ bool DBManager::updateEventById(const char *eventId, const EventPtr &newEvent) {
   query.addBindValue(newEvent->get_tz().id());
   query.addBindValue(newEvent->get_location());
   const auto alarmTimeOptional = newEvent->get_alarm_time();
-  const auto alarmTime = alarmTimeOptional ? alarmTimeOptional->toString(Qt::ISODate) : nullptr;
+  const auto alarmTime =
+      alarmTimeOptional ? alarmTimeOptional->toString(Qt::ISODate) : nullptr;
   query.addBindValue(alarmTime);
   if (newEvent->get_categories())
     query.addBindValue(newEvent->get_categories()->get_cate_id());
@@ -225,7 +235,8 @@ std::shared_ptr<Event> DBManager::getEventById(const String &eventId) {
   QSqlQuery query(*db_);
   query.prepare("SELECT * FROM events WHERE uid = ?");
   query.addBindValue(eventId);
-  if (!query.exec()) return nullptr;
+  if (!query.exec())
+    return nullptr;
   eventPtr->set_uid(query.value(0).toString());
   eventPtr->set_summary(query.value(1).toString());
   eventPtr->set_description(query.value(2).toString());
@@ -240,7 +251,8 @@ std::shared_ptr<Event> DBManager::getEventById(const String &eventId) {
   eventPtr->set_tz(query.value(11).toDateTime().timeZone());
   eventPtr->set_location(query.value(12).toString());
   eventPtr->set_alarm_time(query.value(13).toDateTime());
-  eventPtr->set_categories(getCategoryByName(query.value(14).toString().toStdString().c_str()));
+  eventPtr->set_categories(
+      getCategoryByName(query.value(14).toString().toStdString().c_str()));
 
   event_cache_[eventPtr->get_uid()] = eventPtr;
   return eventPtr;
@@ -250,7 +262,7 @@ std::shared_ptr<Event>
 DBManager::getEventByNameAndTime(const char *eventName,
                                  const DateTime &startTime) {}
 
-EventPtr DBManager::createEventFromQuery(const QSqlQuery&query) {
+EventPtr DBManager::createEventFromQuery(const QSqlQuery &query) {
   auto eventPtr = std::make_shared<Event>();
   eventPtr->set_uid(query.value(0).toString());
   eventPtr->set_summary(query.value(1).toString());
@@ -265,19 +277,26 @@ EventPtr DBManager::createEventFromQuery(const QSqlQuery&query) {
   eventPtr->set_last_modified(query.value(10).toDateTime());
   eventPtr->set_tz(query.value(11).toDateTime().timeZone());
   eventPtr->set_location(query.value(12).toString());
-  eventPtr->set_alarm_time(query.value(13).toDateTime());
-  eventPtr->set_categories(getCategoryById(query.value(14).toString().toStdString().c_str()));
+  if (query.value(13).isNull()) {
+    eventPtr->set_alarm_time(std::nullopt);
+  } else {
+    eventPtr->set_alarm_time(query.value(13).toDateTime());
+  }
+  eventPtr->set_categories(
+      getCategoryById(query.value(14).toString().toStdString().c_str()));
   return eventPtr;
 }
 
-EventPtrList DBManager::getEventsByName(const char* eventName) {
+EventPtrList DBManager::getEventsByName(const char *eventName) {
   EventPtrList events;
-  if (!eventName) return events;
-  for (const auto & [_, evt] : event_cache_) {
+  if (!eventName)
+    return events;
+  for (const auto &[_, evt] : event_cache_) {
     if (evt->get_summary() == eventName)
       events.push_back(evt);
   }
-  if (!events.empty()) return events;
+  if (!events.empty())
+    return events;
 
   QSqlQuery query(*db_);
   query.prepare("SELECT * FROM events WHERE summary = ?");
@@ -294,11 +313,12 @@ EventPtrList DBManager::getEventsByName(const char* eventName) {
 
 QVector<std::shared_ptr<Event>> DBManager::getEventsOfDay(const Date &date) {
   EventPtrList events;
-  for (const auto & [_, evt] : event_cache_) {
+  for (const auto &[_, evt] : event_cache_) {
     if (evt->get_dt_start().date() == date)
       events.push_back(evt);
   }
-  if (!events.empty()) return events;
+  if (!events.empty())
+    return events;
 
   QSqlQuery query(*db_);
   query.prepare("SELECT * FROM events WHERE dt_start = ?");
@@ -316,11 +336,12 @@ QVector<std::shared_ptr<Event>> DBManager::getEventsOfDay(const Date &date) {
 QVector<std::shared_ptr<Event>> DBManager::getEventsOfWeek(const Date &date) {
   EventPtrList events;
   const auto weekNum = date.weekNumber();
-  for (const auto & [_, evt] : event_cache_) {
+  for (const auto &[_, evt] : event_cache_) {
     if (evt->get_dt_start().date().weekNumber() == weekNum)
       events.push_back(evt);
   }
-  if (!events.empty()) return events;
+  if (!events.empty())
+    return events;
 
   QSqlQuery query(*db_);
   query.prepare("SELECT * FROM events WHERE strftime('%W', dt_start) = ?");
@@ -338,11 +359,12 @@ QVector<std::shared_ptr<Event>> DBManager::getEventsOfWeek(const Date &date) {
 QVector<std::shared_ptr<Event>> DBManager::getEventsOfMonth(const Date &date) {
   EventPtrList events;
   const auto monthNum = date.month();
-  for (const auto & [_, evt] : event_cache_) {
+  for (const auto &[_, evt] : event_cache_) {
     if (evt->get_dt_start().date().month() == monthNum)
       events.push_back(evt);
   }
-  if (!events.empty()) return events;
+  if (!events.empty())
+    return events;
 
   QSqlQuery query(*db_);
   query.prepare("SELECT * FROM events WHERE strftime('%m', dt_start) = ?");
@@ -360,11 +382,12 @@ QVector<std::shared_ptr<Event>> DBManager::getEventsOfMonth(const Date &date) {
 QVector<std::shared_ptr<Event>>
 DBManager::getEventsInInterval(const DateTime &start, const DateTime &end) {
   EventPtrList events;
-  for (const auto & [_, evt] : event_cache_) {
+  for (const auto &[_, evt] : event_cache_) {
     if (evt->get_dt_start() >= start && evt->get_dt_end() <= end)
       events.push_back(evt);
   }
-  if (!events.empty()) return events;
+  if (!events.empty())
+    return events;
 
   QSqlQuery query(*db_);
   query.prepare("SELECT * FROM events WHERE dt_start >= ? AND dt_end <= ?");
@@ -383,12 +406,14 @@ DBManager::getEventsInInterval(const DateTime &start, const DateTime &end) {
 QVector<std::shared_ptr<Event>>
 DBManager::getEventsOfCategory(const EventCategories *category) {
   EventPtrList events;
-  if (!category) return events;
-  for (const auto & [_, evt] : event_cache_) {
+  if (!category)
+    return events;
+  for (const auto &[_, evt] : event_cache_) {
     if (evt->get_categories()->get_cate_id() == category->get_cate_id())
       events.push_back(evt);
   }
-  if (!events.empty()) return events;
+  if (!events.empty())
+    return events;
 
   QSqlQuery query(*db_);
   query.prepare("SELECT * FROM events WHERE cate_id = ?");
@@ -404,7 +429,8 @@ DBManager::getEventsOfCategory(const EventCategories *category) {
 }
 
 bool DBManager::removeEvent(const EventPtr &event) {
-  if (!event) return false;
+  if (!event)
+    return false;
   QSqlQuery query(*db_);
   query.prepare("DELETE FROM events WHERE uid = ?");
   query.addBindValue(event->get_uid());
@@ -416,12 +442,14 @@ bool DBManager::removeEvent(const EventPtr &event) {
 }
 
 bool DBManager::restoreEvent(const EventPtr &eventPtr) {
-  if (!eventPtr) return false;
+  if (!eventPtr)
+    return false;
   const auto eventId = eventPtr->get_uid().toStdString().c_str();
   QSqlQuery query(*db_);
   query.prepare("SELECT * FROM events WHERE uid = ?");
   query.addBindValue(eventId);
-  if (!query.exec()) return false;
+  if (!query.exec())
+    return false;
   eventPtr->set_uid(query.value(0).toString());
   eventPtr->set_summary(query.value(1).toString());
   eventPtr->set_description(query.value(2).toString());
@@ -436,14 +464,16 @@ bool DBManager::restoreEvent(const EventPtr &eventPtr) {
   eventPtr->set_tz(query.value(11).toDateTime().timeZone());
   eventPtr->set_location(query.value(12).toString());
   eventPtr->set_alarm_time(query.value(13).toDateTime());
-  eventPtr->set_categories(getCategoryByName(query.value(14).toString().toStdString().c_str()));
+  eventPtr->set_categories(
+      getCategoryByName(query.value(14).toString().toStdString().c_str()));
 
   event_cache_[eventPtr->get_uid()] = eventPtr;
   return true;
 }
 
 bool DBManager::addCategory(const CategoryPtr &category) {
-  if (!category) return false;
+  if (!category)
+    return false;
   QSqlQuery query(*db_);
   category->set_cate_id(generateUID());
   query.prepare("INSERT INTO event_categories (cate_id, cate_color, cate_name) "
@@ -460,7 +490,8 @@ bool DBManager::addCategory(const CategoryPtr &category) {
 
 bool DBManager::updateCategory(const CategoryPtr &oldCategory,
                                const CategoryPtr &newCategory) {
-  if (!oldCategory || !newCategory) return false;
+  if (!oldCategory || !newCategory)
+    return false;
   QSqlQuery query(*db_);
   query.prepare("UPDATE event_categories SET cate_name = ?, cate_color = ? "
                 "WHERE cate_id = ?");
@@ -494,7 +525,7 @@ CategoryPtr DBManager::getCategoryById(const String &categoryId) {
 }
 
 CategoryPtr DBManager::getCategoryByName(const String &categoryName) {
-  for (const auto & [uid, category] : category_cache_) {
+  for (const auto &[uid, category] : category_cache_) {
     if (category->get_cate_name() == categoryName)
       return category;
   }
@@ -511,18 +542,23 @@ CategoryPtr DBManager::getCategoryByName(const String &categoryName) {
   return nullptr;
 }
 
-void DBManager::readCatefories() {
+void DBManager::readCategories() {
   category_cache_.clear();
   QSqlQuery query(*db_);
   query.prepare("SELECT * FROM event_categories");
   if (query.exec()) {
     while (query.next()) {
       const auto category = std::make_shared<EventCategories>(
-        query.value(0).toString(), query.value(1).toString(),
-        query.value(2).toString());
+          query.value(0).toString(), query.value(1).toString(),
+          query.value(2).toString());
       category_cache_[category->get_cate_id()] = category;
     }
   }
+  if (category_cache_.empty())
+      category_cache_["0"] = default_category_;
+  query.prepare("INSERT INTO event_categories VALUES('0', '#1E90FF', 'default');");
+  if (!query.exec())
+    qCritical() << "Failed to execute query:" << query.lastError().text();
 }
 
 void DBManager::readEvents() {
@@ -537,19 +573,19 @@ void DBManager::readEvents() {
   }
 }
 
-CategoryPtrList
-DBManager::getAllCategories() {
+CategoryPtrList DBManager::getAllCategories() {
   CategoryPtrList categories;
   if (category_cache_.empty())
-    readCatefories();
-  for (const auto & [uid, category] : category_cache_) {
+      readCategories();
+  for (const auto &[uid, category] : category_cache_) {
     categories.push_back(category);
   }
   return categories;
 }
 
 bool DBManager::removeCategory(const CategoryPtr &category) {
-  if (!category) return false;
+  if (!category)
+    return false;
   QSqlQuery query(*db_);
   query.prepare("DELETE FROM event_categories WHERE cate_id = ?");
   query.addBindValue(category->get_cate_id());

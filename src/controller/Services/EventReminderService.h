@@ -32,7 +32,7 @@ protected slots:
 
 private:
   std::map<QTime, EventPtrList, std::greater<>> today_events_;
-  std::unique_ptr<QTimer> timer_;
+  QTimer *timer_;
 };
 } // namespace touka
 

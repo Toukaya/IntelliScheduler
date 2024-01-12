@@ -75,18 +75,40 @@ void EventView::init() const {
   }
   if (!event_) return;
   ui->leSummary->setText(event_->get_summary());
-  ui->cbCategory->setCurrentText(event_->get_categories()->get_cate_name());
+  if (event_->get_categories())
+    ui->cbCategory->setCurrentText(event_->get_categories()->get_cate_name());
   ui->leAddLocation->setText(event_->get_location());
   ui->cbAllDay->setChecked(event_->is_all_day());
   ui->dteStarts->setDateTime(event_->get_dt_start());
   ui->dteEnds->setDateTime(event_->get_dt_end());
   ui->cbPrivate->setChecked(event_->is_private());
   ui->teNote->setText(event_->get_description());
-  // ui->cbAlert->setEditable(true);
-  // ui->cbAlert->setInsertPolicy(QComboBox::NoInsert);
+  // TODO this is temp code, need to be removed
   if (const auto alert = event_->get_alarm_time(); alert.has_value()) {
-    ui->cbAlert->setEditText(alert.value().toString("yyyy-MM-dd hh:mm"));
-    qDebug() << alert.value().toString("yyyy-MM-dd hh:mm");
+    const auto secsToEvent = alert->secsTo(event_->get_dt_start());
+    if (secsToEvent == 0) {
+      ui->cbAlert->setCurrentIndex(1);
+    } else if (secsToEvent == 60 * 5) {
+      ui->cbAlert->setCurrentIndex(2);
+    } else if (secsToEvent == 60 * 10) {
+      ui->cbAlert->setCurrentIndex(3);
+    } else if (secsToEvent == 60 * 15) {
+      ui->cbAlert->setCurrentIndex(4);
+    } else if (secsToEvent == 60 * 30) {
+      ui->cbAlert->setCurrentIndex(5);
+    } else if (secsToEvent == 1 * 60 * 60) {
+      ui->cbAlert->setCurrentIndex(6);
+    } else if (secsToEvent == 2 * 60 * 60) {
+      ui->cbAlert->setCurrentIndex(7);
+    } else if (secsToEvent == 1 * 24 * 60 * 60) {
+      ui->cbAlert->setCurrentIndex(8);
+    } else if (secsToEvent == 2 * 24 * 60 * 60) {
+      ui->cbAlert->setCurrentIndex(9);
+    } else {
+      ui->cbAlert->setCurrentIndex(0);
+    }
+  } else {
+    ui->cbAlert->setCurrentIndex(0);
   }
 }
 

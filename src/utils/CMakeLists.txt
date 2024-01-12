@@ -1,11 +1,9 @@
 set(UTILS_SRC
         DateUtil.h
         EnumUtils.h
-        EventFactory.h
         EventUtils.h
         OpenAIAPI.h
         DateUtil.cpp
-        EventFactory.cpp
         EventUtils.cpp
         OpenAIAPI.cpp
 )
