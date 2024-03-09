@@ -1,0 +1,26 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+        "name": "Debug IntelliScheduler",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "${workspaceFolder}/build/IntelliScheduler",
+        "args": [],
+        "stopAtEntry": false,
+        "cwd": "${workspaceFolder}",
+        "environment": [],
+        "externalConsole": false,
+        "MIMode": "lldb",
+        "setupCommands": [
+            {
+                "description": "Enable pretty-printing for gdb",
+                "text": "-enable-pretty-printing",
+                "ignoreFailures": true
+            }
+        ],
+        "preLaunchTask": "build IntelliScheduler",
+        "visualizerFile": "/Users/touka/Library/Application Support/Code/User/workspaceStorage/be741f01a171ed58f91d8a2ab46daf9f/tonka3000.qtvsctools/qt.natvis.xml"
+    }
+]
+}
