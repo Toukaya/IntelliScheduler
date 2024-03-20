@@ -1,12 +1,12 @@
-# IntelliScheduler <img src="resource/icon.svg" style="width: 7%;" />
+# <img src="resource/icon.svg" style="width: 7%;" /> IntelliScheduler
 
 > 一款使用C++Qt开发的桌面日历日程管理工具
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen)](https://github.com/Toukaya/IntelliScheduler.git) [![License](https://img.shields.io/badge/license-GPL3.0-blue.svg)](LICENSE)
 
-该项目是一款基于Qt6和C++20开发的桌面日历日程控件程序。它具有显示月历、添加事件、事件提醒、系统托盘集成等功能。
-
 <p align="center"><img src="resource/icon.svg" style="width: 25%;" /></p>
+
+该项目是一款基于Qt6和C++20开发的桌面日历日程控件程序。它具有显示月历、添加事件、事件提醒、系统托盘集成等功能。
 
 ## 主要功能
 
