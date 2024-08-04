@@ -1,0 +1,8 @@
+[submodule "third_party/sciter"]
+	path = third_party/sciter
+	url = https://gitlab.com/sciter-engine/sciter-js-sdk.git
+	branch = dev-sciter
+[submodule "third_party/async_simple"]
+	path = third_party/async_simple
+	url = https://github.com/alibaba/async_simple.git
+	branch = dev-sciter
